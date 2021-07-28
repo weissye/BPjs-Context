@@ -21,9 +21,14 @@ public class Main {
    * Choose the desired COBP program...
    */
   private static final Example example =
+<<<<<<< HEAD
   Example.abp;
   // Example.HotCold;
   // Example.SampleProgram;
+=======
+      Example.HotCold;
+//      Example.SampleProgram;
+>>>>>>> 071cfeccd311920420d99aa24b8b48ce427e5496
 //      Example.TicTacToe;
 
   /**
@@ -33,8 +38,12 @@ public class Main {
    * Level.NONE : print none
    * Level.CtxChanged: print only CTX.Changed events (i.e., filter the transaction lock/release events)
    */
+<<<<<<< HEAD
   private static final Level logLevel = Level.CtxChanged;
   // private static final Level logLevel = Level.ALL;
+=======
+  private static final Level logLevel = Level.ALL;
+>>>>>>> 071cfeccd311920420d99aa24b8b48ce427e5496
 
 
   public static void main(final String[] args) throws URISyntaxException {
