@@ -6,6 +6,7 @@ import il.ac.bgu.cs.bp.bpjs.context.TicTacToe.TicTacToeGameMain;
 import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
+import il.ac.bgu.cs.bp.bpjs.context.AlternatingBit.*;
 
 
 import java.net.URISyntaxException;
@@ -22,10 +23,10 @@ public class Main {
    */
   private static final Example example =
   Example.abp;
-  // Example.HotCold;
-  // Example.SampleProgram;
+  //  Example.HotCold;
+  //  Example.SampleProgram;
 //      Example.SampleProgram;
-//      Example.TicTacToe;
+    //  Example.TicTacToe;
 
   /**
    * internal context events are: "CTX.Changed", "_____CTX_LOCK_____", "_____CTX_RELEASE_____"
@@ -54,7 +55,8 @@ public class Main {
     //   return;
     // } if (example == Example.HotCold) {
     //   rnr.addListener(new HotColdActuator());
-    // }
+    // } if (example == Example.abp) {
+    //   rnr.addListener(new AlternatingBitActuator());
     // rnr.run();
 
     BProgram bprog = new ContextBProgram(files);

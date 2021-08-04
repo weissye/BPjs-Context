@@ -62,19 +62,19 @@ ctx.bthread('T_success', 'T_SUCCESS', function(entity){
 })
 ctx.bthread('T_dup_error', 'T_DUP_ERROR', function(entity){
     sync({request: Event('dup_error')})
-    if (use_accepting_states) {
-        // AcceptingState.Continuing()
-        AcceptingState.Stopping()
-    }
-    // sync({block: bp.all})
+    // if (use_accepting_states) {
+    //     // AcceptingState.Continuing()
+    //     AcceptingState.Stopping()
+    // }
+    sync({block: bp.all})
 })
 ctx.bthread('T_lost_error', 'T_LOST_ERROR', function(entity){
-    sync({request: Event('lostError')})
-    if (use_accepting_states) {
-        // AcceptingState.Continuing()
-        AcceptingState.Stopping()
-    }
-    // sync({block: bp.all})
+    // sync({request: Event('lostError')})
+    // if (use_accepting_states) {
+    //     // AcceptingState.Continuing()
+    //     AcceptingState.Stopping()
+    // }
+    sync({block: bp.all})
 })
 
 // bthread('control', function () {
