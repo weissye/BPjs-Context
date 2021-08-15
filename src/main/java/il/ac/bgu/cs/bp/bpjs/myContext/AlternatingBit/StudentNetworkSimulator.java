@@ -1,5 +1,7 @@
 package il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit;
 
+import java.util.PriorityQueue;
+
 /**
  * Written by
  *
@@ -114,9 +116,10 @@ public class StudentNetworkSimulator extends NetworkSimulator {
      * Also add any necessary methods (e.g. checksum of a String)
      * <p>
      * This is the constructor.  Don't touch!
+     * @param q
      */
-    public StudentNetworkSimulator(int numMessages, double loss, double corrupt, double avgDelay, int trace, long seed) {
-        super(numMessages, loss, corrupt, avgDelay, trace, seed);
+    public StudentNetworkSimulator(int numMessages, double loss, double corrupt, double avgDelay, int trace, long seed, PriorityQueue<TestElement> q) {
+        super(numMessages, loss, corrupt, avgDelay, trace, seed, q);
     }
 
     public void runSimulator(){

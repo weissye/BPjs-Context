@@ -208,7 +208,7 @@ public class Project
         }
          
         simulator = new StudentNetworkSimulator(nsim, loss, corrupt, delay,
-                                                trace, seed);
+                                                trace, seed, null);
                                                 
         simulator.runSimulator();
     }

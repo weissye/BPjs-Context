@@ -1,6 +1,5 @@
 package il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit;
 
-import java.util.PriorityQueue;
 import java.util.Random;
 
 public abstract class NetworkSimulator
@@ -32,7 +31,7 @@ public abstract class NetworkSimulator
     private int nLost;
     private int nCorrupt;
     private double time;
-    private PriorityQueue<TestElement> q;
+    
     
     protected abstract void aOutput(Message message);
     protected abstract void aInput(Packet packet);
@@ -47,8 +46,7 @@ public abstract class NetworkSimulator
                             double corrupt,
                             double avgDelay,
                             int trace,
-                            long seed, 
-                            PriorityQueue<TestElement> queue)
+                            long seed)
     {
         maxMessages = numMessages;
         lossProb = loss;
@@ -56,7 +54,6 @@ public abstract class NetworkSimulator
         avgMessageDelay = avgDelay;
         traceLevel = trace;
         eventList = new EventListImpl();
-        q = queue;
         
         rand = new Random(seed);
         
@@ -69,14 +66,8 @@ public abstract class NetworkSimulator
     
     public void runSimulator()
     {
-        Event next = null;
-        int step = 0;
-        TestElement te = null; 
-        boolean corruptText = false;
-        boolean corruptSeqNum = false;
-        boolean corruptChkSum = false;
-        boolean lostMsg = false;
-
+        Event next;
+        
         // Perform any student-required initialization
         aInit();
         bInit();
@@ -84,55 +75,12 @@ public abstract class NetworkSimulator
         // Start the whole thing off by scheduling some data arrival
         // from layer 5
         generateNextArrival();
-        if (!q.isEmpty())
-            te = q.poll();
-
+        
         // Begin the main loop
         while (true)
         {
-            if (te != null)
-            {
-                if (te.getStepNo() == step)
-                {
-                    System.out.println("te."+te.getStepNo()+"step "+step);
-                    if (te.getTestEvent().equals("T"))
-                    {
-                        next = new Event(getTime(), TIMERINTERRUPT, A);
-                        System.out.println("next-"+next);
-                    }
-                    else 
-                    {
-                        if (te.getTestEvent().equals("CT")) // Corrupt Text (data)
-                            corruptText = true;
-                        else if (te.getTestEvent().equals("CS"))  // Corrupt SeqNum
-                            corruptSeqNum = true;
-                        else if (te.getTestEvent().equals("CC"))  // Corrupt SeqNum
-                            corruptChkSum = true;
-                        else if (te.getTestEvent().equals("L"))  // Corrupt SeqNum
-                            lostMsg = true;
-                        else
-                        next = eventList.removeNext();
-                        System.out.println("2next-"+next);
-
-                    }
-                    if (!q.isEmpty())
-                        te = q.poll();
-                    else
-                        te = null;
-                }
-                else 
-                {
-                    next = eventList.removeNext();
-                    System.out.println("3next-"+next);
-                }
-            } 
-            else 
-            {
-                next = eventList.removeNext();
-                System.out.println("4next-"+next);
-            }
-
             // Get our next event
+            next = eventList.removeNext();
             if (next == null)
             {
                 break;
@@ -141,7 +89,6 @@ public abstract class NetworkSimulator
             if (traceLevel >= 2)
             {
                 System.out.println();
-                System.out.println("Step-"+step+" te-"+te ); 
                 System.out.print("EVENT time: " + next.getTime());
                 System.out.print("  type: " + next.getType());
                 System.out.println("  entity: " + next.getEntity());
@@ -160,8 +107,6 @@ public abstract class NetworkSimulator
             switch (next.getType())
             {
                 case TIMERINTERRUPT:
-                System.out.println("2 Step-"+step+" te-"+te ); 
-
                     if (next.getEntity() == A)
                     {
                         aTimerInterrupt();
@@ -174,36 +119,6 @@ public abstract class NetworkSimulator
                     break;
                     
                 case FROMLAYER3:
-                    System.out.println("3 Step-"+step+" te-"+te ); 
-
-                    if (lostMsg)
-                    {
-                        lostMsg = false;
-                        break;
-                    }
-                    else 
-                    {
-                        Packet p = next.getPacket();
-                        if (corruptText)
-                        {
-                            String payload = p.getPayload();
-                            payload = "?" + payload.substring(payload.length() - 1);
-                            p.setPayload(payload);
-                            corruptText = false;
-                        }
-                        else if (corruptSeqNum)
-                        {
-                            p.setSeqnum(Math.abs(rand.nextInt()));
-                            corruptSeqNum = false;
-                        }
-                        else if (corruptChkSum)
-                        {
-                            p.setAcknum(Math.abs(rand.nextInt()));
-                            corruptChkSum = false;
-                        }
-                        next.setPacket(p);
-                    }
-   
                     if (next.getEntity() == A)
                     {
                         aInput(next.getPacket());
@@ -221,9 +136,7 @@ public abstract class NetworkSimulator
                     break;
                     
                 case FROMLAYER5:
-                System.out.println("4 Step-"+step+" te-"+te ); 
-    
-
+                    
                     // If a message has arrived from layer 5, we need to
                     // schedule the arrival of the next message
                     generateNextArrival();
@@ -247,7 +160,6 @@ public abstract class NetworkSimulator
                 default:
                     System.out.println("INTERNAL PANIC: Unknown event type");
             }    
-            step += 1;
         }
         
     }
@@ -313,11 +225,11 @@ public abstract class NetworkSimulator
             eventList.add(t);
             return;
         }
-        // else
-        // {
-        //     Event timer = new Event(time + increment, TIMERINTERRUPT, entity);
-        //     eventList.add(timer);
-        // }
+        else
+        {
+            Event timer = new Event(time + increment, TIMERINTERRUPT, entity);
+            eventList.add(timer);
+        }
     }    
     
     protected void toLayer3(int callingEntity, Packet p)
@@ -348,48 +260,48 @@ public abstract class NetworkSimulator
             return;
         }
 
-        // // Simulate losses
-        // if (rand.nextDouble() < lossProb)
-        // {
-        //     nLost++;
+        // Simulate losses
+        if (rand.nextDouble() < lossProb)
+        {
+            nLost++;
             
-        //     if (traceLevel > 0)
-        //     {
-        //         System.out.println("toLayer3: packet being lost");
-        //     }
+            if (traceLevel > 0)
+            {
+                System.out.println("toLayer3: packet being lost");
+            }
             
-        //     return;
-        // }
+            return;
+        }
         
-        // // Simulate corruption
-        // if (rand.nextDouble() < corruptProb)
-        // {
-        //     nCorrupt++;
+        // Simulate corruption
+        if (rand.nextDouble() < corruptProb)
+        {
+            nCorrupt++;
             
-        //     if (traceLevel > 0)
-        //     {
-        //         System.out.println("toLayer3: packet being corrupted");
-        //         //System.out.println("toLayer3 payload: " + packet.getPayload());
-        //     }
+            if (traceLevel > 0)
+            {
+                System.out.println("toLayer3: packet being corrupted");
+                //System.out.println("toLayer3 payload: " + packet.getPayload());
+            }
             
-        //     double x = rand.nextDouble();
-        //     if (x < 0.75)
-        //     {
-        //         String payload = packet.getPayload();
+            double x = rand.nextDouble();
+            if (x < 0.75)
+            {
+                String payload = packet.getPayload();
                 
-        //         payload = "?" + payload.substring(payload.length() - 1);
+                payload = "?" + payload.substring(payload.length() - 1);
                 
-        //         packet.setPayload(payload);
-        //     }
-        //     else if (x < 0.875)
-        //     {
-        //         packet.setSeqnum(Math.abs(rand.nextInt()));
-        //     }
-        //     else
-        //     {
-        //         packet.setAcknum(Math.abs(rand.nextInt()));
-        //     }
-        // }
+                packet.setPayload(payload);
+            }
+            else if (x < 0.875)
+            {
+                packet.setSeqnum(Math.abs(rand.nextInt()));
+            }
+            else
+            {
+                packet.setAcknum(Math.abs(rand.nextInt()));
+            }
+        }
         
         // Decide when the packet will arrive.  Since the medium cannot
         // reorder, the packet will arrive 1 to 10 time units after the

@@ -68,7 +68,7 @@ public class Main {
     BProgram bprog = new ContextBProgram("abp/dal.js","abp/bl.js");
     String name = "abp";
     StateSpaceMapper mpr = new StateSpaceMapper();
-
+    // mpr.  setOutputPath("graphs");   // You can change the default output directory 
     var res = mpr.mapSpace(bprog);
     System.out.println("// completed mapping the states graph");
     System.out.println(res.toString());
