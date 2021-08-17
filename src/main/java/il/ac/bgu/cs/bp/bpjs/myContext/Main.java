@@ -1,20 +1,26 @@
 package il.ac.bgu.cs.bp.bpjs.myContext;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.DefaultAttribute;
+import org.jgrapht.nio.dot.DOTExporter;
 
 import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
 import il.ac.bgu.cs.bp.bpjs.context.PrintCOBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.context.PrintCOBProgramRunnerListener.Level;
 import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
+import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.AlternatingBitActuator;
 import il.ac.bgu.cs.bp.bpjs.myContext.TicTacToe.TicTacToeGameMain;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
+import il.ac.bgu.cs.bp.statespacemapper.exports.DotExporter;
 import jdk.jfr.Timestamp;
 
 
@@ -44,40 +50,57 @@ public class Main {
 
   
   public static void main(final String[] args) throws Exception {
-    // List<String> files =
-    //     Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(example.name())).toURI()).toFile().listFiles()))
-    //         .map(f -> String.join("/", example.name(), f.getName()))
-    //         .collect(Collectors.toList());
-    // System.out.println("files-"+files);
-    // BProgram bprog = new ContextBProgram(files);
-    // final BProgramRunner rnr = new BProgramRunner(bprog);
-    // rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
+      // List<String> files =
+      //     Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(example.name())).toURI()).toFile().listFiles()))
+      //         .map(f -> String.join("/", example.name(), f.getName()))
+      //         .collect(Collectors.toList());
+      // System.out.println("files-"+files);
+      // BProgram bprog = new ContextBProgram(files);
+      // final BProgramRunner rnr = new BProgramRunner(bprog);
+      // rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
 
-    // if (example == Example.TicTacToe) {
-    //   boolean useUI = true;
-    //   TicTacToeGameMain.main(bprog, rnr, useUI);
-    //   return;
-    // } if (example == Example.HotCold) {
-    //   rnr.addListener(new HotColdActuator());
-    // } if (example == Example.abp) {
-    //   rnr.addListener(new AlternatingBitActuator()); }
-    // rnr.run();
+      // if (example == Example.TicTacToe) {
+      //   boolean useUI = true;
+      //   TicTacToeGameMain.main(bprog, rnr, useUI);
+      //   return;
+      // } if (example == Example.HotCold) {
+      //   rnr.addListener(new HotColdActuator());
+      // } if (example == Example.abp) {
+      //   rnr.addListener(new AlternatingBitActuator()); }
+      // rnr.run();
 
-    System.out.println("// start");
+      System.out.println("// start");
+      String name = "abp";
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
-    BProgram bprog = new ContextBProgram("abp/dal.js","abp/bl.js");
-    String name = "abp";
-    StateSpaceMapper mpr = new StateSpaceMapper();
-    // mpr.  setOutputPath("graphs");   // You can change the default output directory 
-    var res = mpr.mapSpace(bprog);
-    System.out.println("// completed mapping the states graph");
-    System.out.println(res.toString());
+      BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
 
-    utilsMapper.getAllPaths(res);
+      // You can use a different EventSelectionStrategy, for example:
+      /* var ess = new PrioritizedBSyncEventSelectionStrategy();
+      bprog.setEventSelectionStrategy(ess); */
+      StateSpaceMapper mpr = new StateSpaceMapper();
+      mpr.setMaxTraceLength(15);
+      var res = mpr.mapSpace(bprog);
+      System.out.println("// completed mapping the states graph");
+      System.out.println(res.toString());
 
-    utilsMapper.exportGraph(name, res);
-    System.out.println("// done");
-    System.exit(0);
+      System.out.println("// Export to GraphViz...");
+      var outputDir = "exports";
+      var path = Paths.get(outputDir, name + ".dot").toString();
+      new DotExporter(res,path,name).export();
+
+      System.out.println("// done");
+
+      System.exit(0);
   }
 
+  
+    // public static List<List<BEvent>> getAllPaths(GenerateAllTracesInspection.MapperResult res) {
+    //   System.out.println("// Generated paths:");
+    //   boolean findSimplePathsOnly = true; // acyclic paths
+    //   int maxPathLength = Integer.MAX_VALUE;
+    //   var paths = res.generatePaths(findSimplePathsOnly, maxPathLength);
+    //   System.out.println(paths);
+    //   return paths;
+    // }
+  
 }

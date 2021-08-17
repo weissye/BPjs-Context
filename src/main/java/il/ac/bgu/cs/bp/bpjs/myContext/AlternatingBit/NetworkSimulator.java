@@ -110,7 +110,7 @@ public abstract class NetworkSimulator
                             corruptChkSum = true;
                         else if (te.getTestEvent().equals("L"))  // Corrupt SeqNum
                             lostMsg = true;
-                        else
+                        
                         next = eventList.removeNext();
                         System.out.println("2next-"+next);
 

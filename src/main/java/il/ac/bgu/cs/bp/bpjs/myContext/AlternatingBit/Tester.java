@@ -34,6 +34,8 @@ public class Tester
             try
             {
                 test = stdIn.readLine().split(" ");   
+                // buffer = stdIn.readLine();   
+                System.out.println("Buffer-"+test[0]);
                 buffer = test[0];
             }
             catch (IOException ioe)
@@ -46,8 +48,10 @@ public class Tester
             {
                 TestElement t = new TestElement(test[0], Integer.parseInt(test[1]));
                 q.add(t);
+            }  
+            else if (buffer.equals(""))
+                    break;
             }
-        }
 
         for (TestElement item: q) {
             System.out.println(item);

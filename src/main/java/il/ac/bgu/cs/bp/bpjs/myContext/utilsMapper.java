@@ -28,7 +28,7 @@ import il.ac.bgu.cs.bp.statespacemapper.GenerateAllTracesInspection;
 
 public class utilsMapper {
 
-    public static List<List<BEvent>> getAllPaths(GenerateAllTracesInspection.MapperResult res) {
+    public static List<List<BEvent>> getAllPaths2(GenerateAllTracesInspection.MapperResult res) {
         System.out.println("// Generated paths:");
         boolean findSimplePathsOnly = true; // acyclic paths
         int maxPathLength = Integer.MAX_VALUE;
@@ -39,19 +39,19 @@ public class utilsMapper {
     
       public static void exportGraph(String runName, GenerateAllTracesInspection.MapperResult res) throws IOException {
         Function<GenerateAllTracesInspection.MapperEdge, Map<String, Attribute>> edgeAttributeProvider = e -> Map.of(
-            "label", DefaultAttribute.createAttribute(e.event.toString()),
-            "Event", DefaultAttribute.createAttribute(e.event.toString()),
-            "Event_name", DefaultAttribute.createAttribute(e.event.name),
-            "Event_value", DefaultAttribute.createAttribute(Objects.toString(e.event.maybeData))
+            "label", DefaultAttribute.createAttribute(e.event.name)
+            // "Event", DefaultAttribute.createAttribute(e.event.toString()),
+            // "Event_name", DefaultAttribute.createAttribute(e.event.name),
+            // "Event_value", DefaultAttribute.createAttribute(Objects.toString(e.event.maybeData))
         );
         Function<GenerateAllTracesInspection.MapperVertex, Map<String, Attribute>> vertexAttributeProvider = v -> {
           boolean startNode = v.equals(res.startNode);
           boolean acceptingNode = res.acceptingStates.contains(v);
           return Map.of(
-              "hash", DefaultAttribute.createAttribute(v.hashCode()),
-              "store", DefaultAttribute.createAttribute(getStore(v.bpss)),
-              "statements", DefaultAttribute.createAttribute(getStatments(v.bpss)),
-              "bthreads", DefaultAttribute.createAttribute(getBThreads(v.bpss)),
+              // "hash", DefaultAttribute.createAttribute(v.hashCode()),
+              // "store", DefaultAttribute.createAttribute(getStore(v.bpss)),
+              // "statements", DefaultAttribute.createAttribute(getStatments(v.bpss)),
+              // "bthreads", DefaultAttribute.createAttribute(getBThreads(v.bpss)),
               "shape", DefaultAttribute.createAttribute(startNode ? "none " : acceptingNode? "doublecircle" : "circle")
           );
         };
