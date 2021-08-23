@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
+import java.util.PriorityQueue;
+
 
 import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
 import il.ac.bgu.cs.bp.bpjs.context.PrintCOBProgramRunnerListener;
@@ -18,6 +20,8 @@ import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.AlternatingBitActuator;
+import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.StudentNetworkSimulator;
+import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.TestElement;
 import il.ac.bgu.cs.bp.bpjs.myContext.TicTacToe.TicTacToeGameMain;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.exports.DotExporter;
@@ -31,6 +35,7 @@ public class Main {
    */
 
   private static final Example example =
+  // Example.abpStudents;
   Example.abp;
   //  Example.HotCold;
   //  Example.SampleProgram;
@@ -47,27 +52,51 @@ public class Main {
   //private static final Level logLevel = Level.CtxChanged;
   // private static final Level logLevel = Level.ALL;
   private static final Level logLevel = Level.ALL;
+    // private static Queue<TestElement> q = new LinkedList<>();
+  public static PriorityQueue<TestElement> q = new PriorityQueue<>();
+  static StudentNetworkSimulator simulator;
 
   
   public static void main(final String[] args) throws Exception {
-      // List<String> files =
-      //     Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(example.name())).toURI()).toFile().listFiles()))
-      //         .map(f -> String.join("/", example.name(), f.getName()))
-      //         .collect(Collectors.toList());
-      // System.out.println("files-"+files);
-      // BProgram bprog = new ContextBProgram(files);
-      // final BProgramRunner rnr = new BProgramRunner(bprog);
-      // rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
+    // int nsim = 10;
+    // double loss = -1.0;
+    // double corrupt = -1.0;
+    // double delay = 1000;
+    // int trace = 3;
+    // long seed = -1;
 
-      // if (example == Example.TicTacToe) {
-      //   boolean useUI = true;
-      //   TicTacToeGameMain.main(bprog, rnr, useUI);
-      //   return;
-      // } if (example == Example.HotCold) {
-      //   rnr.addListener(new HotColdActuator());
-      // } if (example == Example.abp) {
-      //   rnr.addListener(new AlternatingBitActuator()); }
-      // rnr.run();
+    //   List<String> files =
+    //       Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(example.name())).toURI()).toFile().listFiles()))
+    //           .map(f -> String.join("/", example.name(), f.getName()))
+    //           .collect(Collectors.toList());
+    //   System.out.println("files-"+files);
+    //   BProgram bprog = new ContextBProgram(files);
+    //   final BProgramRunner rnr = new BProgramRunner(bprog);
+    //   rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
+
+    //   if (example == Example.TicTacToe) {
+    //     boolean useUI = true;
+    //     TicTacToeGameMain.main(bprog, rnr, useUI);
+    //     return;
+    //   } if (example == Example.HotCold) {
+    //     rnr.addListener(new HotColdActuator());
+    //   } if (example == Example.abp) {
+    //     rnr.addListener(new AlternatingBitActuator()); 
+    //   } if (example == Example.abpStudents) {
+    //     rnr.addListener(new AlternatingBitActuator()); 
+    //   }
+    //   // simulator = new StudentNetworkSimulator(nsim, loss, corrupt, delay,
+    //   // trace, seed, Main.q);
+      
+    //   // simulator.runSimulator();
+
+    //   rnr.run();
+
+      // simulator = new StudentNetworkSimulator(nsim, loss, corrupt, delay,
+      // trace, seed, Main.q);
+      
+      // simulator.runSimulator();
+
 
       System.out.println("// start");
       String name = "abp";
@@ -78,7 +107,7 @@ public class Main {
       /* var ess = new PrioritizedBSyncEventSelectionStrategy();
       bprog.setEventSelectionStrategy(ess); */
       StateSpaceMapper mpr = new StateSpaceMapper();
-      mpr.setMaxTraceLength(15);
+      mpr.setMaxTraceLength(6);
       var res = mpr.mapSpace(bprog);
       System.out.println("// completed mapping the states graph");
       System.out.println(res.toString());

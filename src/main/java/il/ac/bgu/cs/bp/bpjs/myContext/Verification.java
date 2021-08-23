@@ -17,7 +17,8 @@ public class Verification {
    * Choose the desired COBP program...
    */
   private static final Example example =
-    Example.abp;
+    Example.abpStudents;
+    // Example.abp;
   // Main.Example.SampleProgram;
   //      Main.Example.HotCold;
 //      Main.Example.TicTacToe;

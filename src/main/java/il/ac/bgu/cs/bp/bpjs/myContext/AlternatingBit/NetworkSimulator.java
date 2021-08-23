@@ -33,7 +33,15 @@ public abstract class NetworkSimulator
     private int nCorrupt;
     private double time;
     private PriorityQueue<TestElement> q;
+    private static int step = 0;
+
     
+    public static int getStep() {
+        return step;
+    }
+    public void setStep(int step) {
+        this.step = step;
+    }
     protected abstract void aOutput(Message message);
     protected abstract void aInput(Packet packet);
     protected abstract void aTimerInterrupt();
@@ -70,7 +78,6 @@ public abstract class NetworkSimulator
     public void runSimulator()
     {
         Event next = null;
-        int step = 0;
         TestElement te = null; 
         boolean corruptText = false;
         boolean corruptSeqNum = false;

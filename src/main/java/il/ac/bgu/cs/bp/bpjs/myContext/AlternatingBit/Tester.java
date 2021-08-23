@@ -3,11 +3,13 @@ package il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit;
 import java.io.*;
 import java.util.PriorityQueue;
 
+import il.ac.bgu.cs.bp.bpjs.myContext.Main;
+
 
 public class Tester
 {
     // private static Queue<TestElement> q = new LinkedList<>();
-    static PriorityQueue<TestElement> q = new PriorityQueue<>();
+    // static PriorityQueue<TestElement> q = new PriorityQueue<>();
 
     public final static void main(String[] argv)
     {
@@ -47,13 +49,13 @@ public class Tester
             if (buffer.equals("L") || buffer.equals("CT") || buffer.equals("CC") || buffer.equals("CS") || buffer.equals("T"))
             {
                 TestElement t = new TestElement(test[0], Integer.parseInt(test[1]));
-                q.add(t);
+                Main.q.add(t);
             }  
             else if (buffer.equals(""))
                     break;
             }
 
-        for (TestElement item: q) {
+        for (TestElement item: Main.q) {
             System.out.println(item);
         }
     
@@ -243,7 +245,7 @@ public class Tester
         }
          
         simulator = new StudentNetworkSimulator(nsim, loss, corrupt, delay,
-                                                trace, seed, q);
+                                                trace, seed, Main.q);
                                                 
         simulator.runSimulator();
     }
