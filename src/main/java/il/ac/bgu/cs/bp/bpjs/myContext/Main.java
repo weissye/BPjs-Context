@@ -35,8 +35,8 @@ public class Main {
    */
 
   private static final Example example =
-  // Example.abpStudents;
-  Example.abp;
+//  Example.abpStudents;
+   Example.abp;
   //  Example.HotCold;
   //  Example.SampleProgram;
 //      Example.SampleProgram;
@@ -54,70 +54,53 @@ public class Main {
   private static final Level logLevel = Level.ALL;
     // private static Queue<TestElement> q = new LinkedList<>();
   public static PriorityQueue<TestElement> q = new PriorityQueue<>();
-  static StudentNetworkSimulator simulator;
 
   
   public static void main(final String[] args) throws Exception {
-    // int nsim = 10;
-    // double loss = -1.0;
-    // double corrupt = -1.0;
-    // double delay = 1000;
-    // int trace = 3;
-    // long seed = -1;
 
-    //   List<String> files =
-    //       Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(example.name())).toURI()).toFile().listFiles()))
-    //           .map(f -> String.join("/", example.name(), f.getName()))
-    //           .collect(Collectors.toList());
-    //   System.out.println("files-"+files);
-    //   BProgram bprog = new ContextBProgram(files);
-    //   final BProgramRunner rnr = new BProgramRunner(bprog);
-    //   rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
+      List<String> files =
+          Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(example.name())).toURI()).toFile().listFiles()))
+              .map(f -> String.join("/", example.name(), f.getName()))
+              .collect(Collectors.toList());
+      System.out.println("files-"+files);
+      BProgram bprog = new ContextBProgram(files);
+      final BProgramRunner rnr = new BProgramRunner(bprog);
+      rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
 
-    //   if (example == Example.TicTacToe) {
-    //     boolean useUI = true;
-    //     TicTacToeGameMain.main(bprog, rnr, useUI);
-    //     return;
-    //   } if (example == Example.HotCold) {
-    //     rnr.addListener(new HotColdActuator());
-    //   } if (example == Example.abp) {
-    //     rnr.addListener(new AlternatingBitActuator()); 
-    //   } if (example == Example.abpStudents) {
-    //     rnr.addListener(new AlternatingBitActuator()); 
-    //   }
-    //   // simulator = new StudentNetworkSimulator(nsim, loss, corrupt, delay,
-    //   // trace, seed, Main.q);
-      
-    //   // simulator.runSimulator();
+      if (example == Example.TicTacToe) {
+        boolean useUI = true;
+        TicTacToeGameMain.main(bprog, rnr, useUI);
+        return;
+      } if (example == Example.HotCold) {
+        rnr.addListener(new HotColdActuator());
+      } if (example == Example.abp) {
+        rnr.addListener(new AlternatingBitActuator()); 
+      } if (example == Example.abpStudents) {
+        rnr.addListener(new AlternatingBitActuator()); 
+      }
 
-    //   rnr.run();
+      rnr.run();
 
-      // simulator = new StudentNetworkSimulator(nsim, loss, corrupt, delay,
-      // trace, seed, Main.q);
-      
-      // simulator.runSimulator();
+    //   System.out.println("// start");
+    //   String name = "abp";
+    // // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
+    //   BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
 
+    //   // You can use a different EventSelectionStrategy, for example:
+    //   /* var ess = new PrioritizedBSyncEventSelectionStrategy();
+    //   bprog.setEventSelectionStrategy(ess); */
+    //   StateSpaceMapper mpr = new StateSpaceMapper();
+    //   mpr.setMaxTraceLength(6);
+    //   var res = mpr.mapSpace(bprog);
+    //   System.out.println("// completed mapping the states graph");
+    //   System.out.println(res.toString());
 
-      System.out.println("// start");
-      String name = "abp";
-    // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
-      BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
+    //   System.out.println("// Export to GraphViz...");
+    //   var outputDir = "exports";
+    //   var path = Paths.get(outputDir, name + ".dot").toString();
+    //   new DotExporter(res,path,name).export();
 
-      // You can use a different EventSelectionStrategy, for example:
-      /* var ess = new PrioritizedBSyncEventSelectionStrategy();
-      bprog.setEventSelectionStrategy(ess); */
-      StateSpaceMapper mpr = new StateSpaceMapper();
-      mpr.setMaxTraceLength(6);
-      var res = mpr.mapSpace(bprog);
-      System.out.println("// completed mapping the states graph");
-      System.out.println(res.toString());
-
-      System.out.println("// Export to GraphViz...");
-      var outputDir = "exports";
-      var path = Paths.get(outputDir, name + ".dot").toString();
-      new DotExporter(res,path,name).export();
-
-      System.out.println("// done");
+    //   System.out.println("// done");
 
       System.exit(0);
   }

@@ -1,13 +1,15 @@
-package il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit;
+package il.ac.bgu.cs.bp.bpjs.myContext.myAbp;
 
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.BProgramRunnerListenerAdapter;
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
+import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.NetworkSimulator;
+import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.StudentNetworkSimulator;
+import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.TestElement;
 import il.ac.bgu.cs.bp.bpjs.myContext.Main;
 
 
-
-public class AlternatingBitActuator extends BProgramRunnerListenerAdapter {
+public class abpActuator extends BProgramRunnerListenerAdapter {
     static StudentNetworkSimulator simulator;
     int nsim = 10;
     double loss = -1.0;

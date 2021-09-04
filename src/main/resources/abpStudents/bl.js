@@ -1,26 +1,30 @@
+bthread('StartSimulator', function (entity) {
+  // sync({request: Event('startSimulator'), block: [bp.all]})
+  sync({request: Event('startSimulator')})
+})
 bthread('DoNothing', function (entity) {
   while (true) {
-    sync({request: Event('doNothing')}, 100)
+    sync({request: Event('doNothing')}, 10)
   }
 })
 bthread('TimeOut', function (entity) {
   while (true) {
-    sync({request: Event('timeOut')}, 15)
+    sync({request: Event('timeOut')}, 1500)
   }
 })
 bthread('DataCorrupt', function (entity) {
   while (true) {
-    sync({request: Event('dataCorrupt')}, 10)
+    sync({request: Event('dataCorrupt')}, 10000)
   }
 })
 bthread('SeqCorrupt', function (entity) {
   while (true) {
-    sync({request: Event('seqCorrupt')}, 2)
+    sync({request: Event('seqCorrupt')}, 20000)
   }
 })
 bthread('CksmCorrupt', function (entity) {
   while (true) {
-    sync({request: Event('cksmCorrupt')}, 2)
+    sync({request: Event('cksmCorrupt')}, 20000)
   }
 })
 
