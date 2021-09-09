@@ -1,3 +1,4 @@
+
 ctx.bthread('Send', 't_send', function (entity) {
   while (true) {
     sync({request: Event('send')})
@@ -77,11 +78,3 @@ ctx.bthread('T_lost_error', 'T_LOST_ERROR', function (entity) {
    sync({block: bp.all})
 })
 
-// bthread('control', function () {
-//     for(var j=0; j<500; j++ )
-//     {
-//         sync( {waitFor: [bp.all] } );
-//     }
-//     sync( {block: [bp.all] } );
-
-//   })

@@ -2,11 +2,12 @@ package il.ac.bgu.cs.bp.bpjs.myContext.myAbp;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
-public class myAbpFunctions {
+public class MyAbpFunctions {
 
-    Queue<l3Channel> t2r = new LinkedList<l3Channel>();
-    Queue<l3Channel> r2t = new LinkedList<l3Channel>();
+    Queue<L3Msg> t2r = new LinkedList<L3Msg>();
+    Queue<L3Msg> r2t = new LinkedList<L3Msg>();
     Queue<String> received = new LinkedList<String>();
 
 
@@ -71,37 +72,8 @@ public class myAbpFunctions {
     }
 
 
-
-//    ##########################################
-//            # Transmitter actions
-//# send:    send next message that has not been acknowledged yet:
-//            #          Append the message to the transmitter-to-receiver channel.
-//    input "t:send" {
-//        guard { return len(t2r) < CHN_SIZE and send_next < len(TO_BE_SENT) }
-//        body { t2r.append((t_seq, TO_BE_SENT[send_next])) }
-//    }
-//# ack ok:  receive expected acknowledgement from the receiver.
-//            #          Consider acknowledged message successfully received.
-//#          Increase sequence number for next messages.
-//    input "t:ack ok" {
-//        guard { return r2t and r2t[0] == (t_seq + 1 if t_seq + 1 <= SEQ_MAX else 0) }
-//        body {
-//            r2t.pop(0)
-//            t_seq += 1
-//            if t_seq > SEQ_MAX:
-//            t_seq = 0
-//            send_next += 1
-//        }
-//    }
-//    input "t:ack nok" {
-//        guard { return r2t and r2t[0] != (t_seq + 1 if t_seq + 1 <= SEQ_MAX else 0) }
-//        body {
-//            r2t.pop(0)
-//        }
-//    }
-
     public void sendData(String data) {
-        l3Channel t = new l3Channel(tSeq, data);
+        L3Msg t = new L3Msg(tSeq, data);
         t2r.add(t);
         System.out.println(t2r.toString());
     }
@@ -115,29 +87,44 @@ public class myAbpFunctions {
     }
 
     public void sentAckMsg(){
-        l3Channel x = t2r.remove();
+        L3Msg x = t2r.remove();
         String payload = x.getData();
         rSeq = (rSeq + 1) % SEQ_MAX;
-        l3Channel t = new l3Channel(rSeq);
+        L3Msg t = new L3Msg(rSeq);
         r2t.add(t);
         received.add(payload);
     }
         public void sendNakMsg(){
             t2r.remove();
-            l3Channel t = new l3Channel(rSeq);
+            L3Msg t = new L3Msg(rSeq);
             r2t.add(t);
         }
-//        abp.lostT2r();
-//        continue;
-//        } else if (ifLostR2t()) {
-//        abp.lostR2t();
-//        continue;
-//        } else if (ifReorderT2r()) {
-//        abp.reorderT2r();
-//        continue;
-//        } else if (ifReorderR2t()) {
-//        abp.reorderR2t();
-//        continue;
+        public void lostT2r(){
+            t2r.remove();
+        }
+        public void lostR2t(){
+            r2t.remove();
+        }
 
+        public void reorderT2r() {
+            reversequeue(t2r);
+        }
+
+    public void reorderR2t() {
+        reversequeue(r2t);
+    }
+
+    static void reversequeue(Queue <L3Msg> queue)
+    {
+        Stack<L3Msg> stack = new Stack<>();
+        while (!queue.isEmpty()) {
+            stack.add(queue.peek());
+            queue.remove();
+        }
+        while (!stack.isEmpty()) {
+            queue.add(stack.peek());
+            stack.pop();
+        }
+    }
 
 }

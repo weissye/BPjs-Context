@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import il.ac.bgu.cs.bp.bpjs.myContext.myAbp.AbpActuator;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
@@ -74,7 +76,7 @@ public class Main {
       } if (example == Example.HotCold) {
         rnr.addListener(new HotColdActuator());
       } if (example == Example.abp) {
-        rnr.addListener(new AlternatingBitActuator()); 
+        rnr.addListener(new AbpActuator());
       } if (example == Example.abpStudents) {
         rnr.addListener(new AlternatingBitActuator()); 
       }

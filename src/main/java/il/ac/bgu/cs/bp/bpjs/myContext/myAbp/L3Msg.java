@@ -1,14 +1,15 @@
 package il.ac.bgu.cs.bp.bpjs.myContext.myAbp;
 
-public class l3Channel {
+public class L3Msg {
     private int secNo;
     private String data;
 
-    public l3Channel(int secNo, String data) {
+    public L3Msg(int secNo, String data) {
         this.secNo = secNo;
         this.data = data;
+
     }
-    public l3Channel(int secNo) {
+    public L3Msg(int secNo) {
         this.secNo = secNo;
         this.data = "Dummy";
     }
