@@ -4,36 +4,59 @@ import il.ac.bgu.cs.bp.bpjs.execution.listeners.BProgramRunnerListenerAdapter;
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.myContext.Events.DataToBeSend;
+import org.mozilla.javascript.NativeObject;
 
 
 public class AbpActuator extends BProgramRunnerListenerAdapter {
-  AbpProcess simulator = new AbpProcess();
-
+  AbpTester simulator = new AbpTester();
+  AbpInfra.externalInput nextInput = AbpInfra.externalInput.NONE;
+  String nextData;
 
   @Override
   public void eventSelected(BProgram bp, BEvent e) {
-    if(e.name.equals("doNothing"))  {
-      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name );
-    } else  if(e.name.equals("dataToBeSend"))  {
+    AbpInfra.externalInput nextEvent = AbpInfra.externalInput.NONE;
+
+    if (e.name.equals("doNothing")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+    } else if (e.name.equals("dataToBeSend")) {
       //DataToBeSend dataToBeSend = (DataToBeSend)e;
-      System.out.println("---*****:" + bp.getName()+ " Name-" + e.name + " Actuator pour " + e.getData()  );
- //     simulator.TO_BE_SENT.add(dataToBeSend.getData());
-      simulator.setNextInput(AbpProcess.externatInput.SEND);
-    }  else if(e.name.equals("doT2rLost"))  {
-      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name );
-      simulator.abp.setCHN_LOSS(true);
-      simulator.setNextInput(AbpProcess.externatInput.T2RLOST);
-    }  else if(e.name.equals("doR2tLost"))  {
-      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name );
-      simulator.abp.setCHN_LOSS(true);
-      simulator.setNextInput(AbpProcess.externatInput.R2TLOST);
-    } else if(e.name.equals("startSimulator"))  {
-      System.out.println("**********:" + bp.getName() + " Actuator pour " + e.name );
-      simulator.setNextInput(AbpProcess.externatInput.NONE);
-      simulator.runSimulator();
-      System.out.println("//simulator start running");
-    }
-    simulator.runSimulator();
-    simulator.setNextInput(AbpProcess.externatInput.NONE);
+      NativeObject t = (NativeObject) e.getData();
+      System.out.println("---*****:" + bp.getName() + " Name-" + e.name + " Actuator pour " + t.get("info"));
+      simulator.abpSimulator(AbpInfra.externalInput.TOSEND, (String) t.get("info"));
+    } else if (e.name.equals("send")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.SEND;
+    } else if (e.name.equals("ackOk")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.ACKOK;
+    } else if (e.name.equals("ackNok")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.ACKNOK;
+    } else if (e.name.equals("recAck")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.RECACK;
+    } else if (e.name.equals("recNak")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.RECNAK;
+    } else if (e.name.equals("t2rLoss")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.T2RLOSS;
+    } else if (e.name.equals("r2tLoss")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.R2TLOSS;
+    } else if (e.name.equals("t2rReordered")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.T2RREORDER;
+    } else if (e.name.equals("r2tReorder")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.R2TREORDER;
+    } else if (e.name.equals("success")) {
+      System.out.println("---*****:" + bp.getName() + " Actuator pour " + e.name);
+      nextEvent = AbpInfra.externalInput.FINISH;
+    } else
+        nextEvent = AbpInfra.externalInput.NONE;
+
+    simulator.abpSimulator(nextEvent);
   }
 }
+

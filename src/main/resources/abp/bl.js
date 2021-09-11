@@ -13,7 +13,7 @@ ctx.bthread('AckOk', 't_ackOk', function (entity) {
 
 ctx.bthread('AckNok', 't_ackNok', function (entity) {
   while (true) {
-    sync({request: Event('ackOk')})
+    sync({request: Event('ackNok')})
   }
 })
 
@@ -41,20 +41,22 @@ ctx.bthread('T2rLoss', 't2r_loss', function (entity) {
   }
 })
 
-ctx.bthread('R2tReordered', 'r2t_reordered', function (entity) {
+ctx.bthread('R2tReorder', 'r2t_reordered', function (entity) {
   while (true) {
-    sync({request: Event('r2tReordered')})
+    sync({request: Event('r2tReorder')})
   }
 })
 
-ctx.bthread('T2rReordered', 't2r_reordered', function (entity) {
+ctx.bthread('T2rReorder', 't2r_reordered', function (entity) {
   while (true) {
-    sync({request: Event('t2rReordered')})
+    sync({request: Event('t2rReorder')})
   }
 })
 
 ctx.bthread('T_success', 'T_SUCCESS', function (entity) {
   sync({request: Event('success')})
+  bp.log.info("Effect for success, e={0}", entity);
+
 //  if (use_accepting_states) {
 //    // AcceptingState.Continuing()
 //    AcceptingState.Stopping()

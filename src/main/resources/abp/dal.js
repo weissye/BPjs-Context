@@ -9,8 +9,8 @@ ctx.populateContext([
     TO_BE_SEND: [],
     SEQ_MAX: 2,
     CHN_SIZE: 2,
-    CHN_LOSS: false,
-    CHN_REORDERED: false
+    CHN_LOSS: true,
+    CHN_REORDERED: true
   })
   // ctx.Entity("abpData", "abp", {t_seq:0, r_seq:0, t2r:[], r2t:[], send_next:0, received:[], TO_BE_SEND:['a', 'b', 'c'], SEQ_MAX:2, CHN_SIZE:2, CHN_LOSS:false, CHN_REORDERED:false})
 ])
@@ -67,12 +67,14 @@ ctx.registerEffect('ackOk', function (e) {
   e.r2t.shift()
   e.t_seq = (e.t_seq + 1) % e.SEQ_MAX
   e.send_next += 1
+  // bp.log.info("Effect for ackOk, e={0}", e);
   ctx.updateEntity(e)
 })
 
 ctx.registerEffect('ackNok', function (e) {
   e = ctx.getEntityById('abpData')
   e.r2t.shift()
+  // bp.log.info("Effect for ackNok, e={0}", e);
   ctx.updateEntity(e)
 })
 
@@ -92,64 +94,59 @@ ctx.registerEffect('recNak', function (e) {
   e = ctx.getEntityById('abpData')
   e.t2r.shift()
   e.r2t.push(e.r_seq)
+  // bp.log.info("Effect for recNak, e={0}", e);
   ctx.updateEntity(e)
 })
 
 ctx.registerEffect('t2rLoss', function (e) {
   e = ctx.getEntityById('abpData')
   e.t2r.shift()
-  e.CHN_LOSS = false
+  // bp.log.info("Effect for t2rLoss, e={0}", e);
   ctx.updateEntity(e)
 })
 ctx.registerEffect('r2tLoss', function (e) {
   e = ctx.getEntityById('abpData')
   e.r2t.shift()
-  e.CHN_LOSS = false
+  // bp.log.info("Effect for r2tLoss, e={0}", e);
   ctx.updateEntity(e)
 })
-ctx.registerEffect('t2rReordered', function (e) {
+ctx.registerEffect('t2rReorder', function (e) {
   e = ctx.getEntityById('abpData')
   e.t2r.reverse()
-  e.CHN_REORDERED = false
+  // bp.log.info("Effect for t2rReorder, e={0}", e);
   ctx.updateEntity(e)
 })
-ctx.registerEffect('r2tReordered', function (e) {
+ctx.registerEffect('r2tReorder', function (e) {
   e = ctx.getEntityById('abpData')
   e.r2t.reverse()
-  e.CHN_REORDERED = false
+  // bp.log.info("Effect for r2tReorder, e={0}", e);
   ctx.updateEntity(e)
 })
 
-ctx.registerEffect('dataToBeSend', function () {
+ctx.registerEffect('dataToBeSend', function (eventData) {
   e = ctx.getEntityById('abpData')
-//  f = ctx.getEntityById('dataToBeSend')
-  e.TO_BE_SEND.push(e.data)
-   bp.log.info("Effect for ToBeSend, f.data={0}", e.data);
+  e.TO_BE_SEND.push(eventData.info)
+   // bp.log.info("Effect for dataToBeSend, ee.data={0}", e);
   ctx.updateEntity(e)
 })
 ctx.registerEffect('doT2rLost', function () {
   e = ctx.getEntityById('abpData')
-  e.CHN_LOSS = true
-  // bp.log.info("Effect for ToBeSend, e.data={0}", e.data);
+  // bp.log.info("Effect for doT2rLost, e.data={0}", e);
   ctx.updateEntity(e)
 })
 ctx.registerEffect('doR2tLost', function () {
   e = ctx.getEntityById('abpData')
-  e.CHN_LOSS = true
-  // bp.log.info("Effect for ToBeSend, e.data={0}", e.data);
+  // bp.log.info("Effect for doR2tLost, e.data={0}", e.data);
   ctx.updateEntity(e)
 })
 ctx.registerEffect('doT2rReorder', function () {
   e = ctx.getEntityById('abpData')
-  e.CHN_REORDERED = true
-
-  // bp.log.info("Effect for ToBeSend, e.data={0}", e.data);
+  // bp.log.info("Effect for doT2rReorder, e.data={0}", e.data);
   ctx.updateEntity(e)
 })
 ctx.registerEffect('doR2tReorder', function () {
   e = ctx.getEntityById('abpData')
-  e.CHN_REORDERED = true
-  // bp.log.info("Effect for ToBeSend, e.data={0}", e.data);
+  // bp.log.info("Effect for doR2tReorder, e.data={0}", e);
   ctx.updateEntity(e)
 })
 
