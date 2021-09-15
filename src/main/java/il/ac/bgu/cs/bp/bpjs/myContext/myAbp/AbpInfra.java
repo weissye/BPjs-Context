@@ -20,7 +20,7 @@ public class AbpInfra {
     EnumSet<states> receiveStates = EnumSet.range(states.RECACK, states.R2TREORDER);
 
     enum externalInput {
-        NONE, TOSEND, SEND, ACKOK, ACKNOK, T2RLOSS, T2RREORDER, FINISH, RECACK, RECNAK, R2TLOSS, R2TREORDER ;
+        NONE, TOSEND, SEND, ACKOK, ACKNOK, T2RLOSS, T2RREORDER, FINISH, SUCCESS,  RECACK, RECNAK, R2TLOSS, R2TREORDER ;
     }
     private int SEQ_MAX = 2;
     private int CHN_SIZE = 2;
@@ -81,6 +81,14 @@ public class AbpInfra {
             queue.add(stack.peek());
             stack.pop();
         }
+    }
+    public void resetInfra(){
+        r2t.clear();
+        t2r.clear();
+        received.clear();
+        nextInput = externalInput.NONE;
+
+
     }
 
 }

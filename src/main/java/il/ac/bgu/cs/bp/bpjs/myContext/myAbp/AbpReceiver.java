@@ -4,13 +4,16 @@ import java.util.*;
 
 public class AbpReceiver {
 
-//    private AbpInfra.states receiverState = AbpInfra.states.NONE;
+
+    //    private AbpInfra.states receiverState = AbpInfra.states.NONE;
     private int rSeq = 0;
     private AbpInfra infra = new AbpInfra();
 
     public AbpReceiver() {
         this.rSeq = 0;
     }
+    public int getrSeq() { return rSeq; }
+    public void setrSeq(int rSeq) { this.rSeq = rSeq; }
 
     public Queue<String> getReceived() {
         return infra.received;

@@ -12,6 +12,8 @@ public class AbpTester {
     private AbpReceiver receiverSimulator = new AbpReceiver();
     private final AbpInfra infra = new AbpInfra();
 
+
+
     public void abpSimulator(AbpInfra.externalInput nextInput, String... data) {
 
         boolean isReceiver = false;
@@ -68,6 +70,7 @@ public class AbpTester {
                     isReceiver = true;
                     break;
                 case FINISH:
+                case SUCCESS:
                     receiverState = AbpInfra.states.NONE;
                     senderState = AbpInfra.states.FINISH;
                     isReceiver = false;
@@ -88,5 +91,12 @@ public class AbpTester {
         System.out.println("nextInput-"+nextInput+" senderState-"+senderState+" receiverState-"+receiverState);
         System.out.println("TBS-"+senderSimulator.TO_BE_SENT+" t2r-"+infra.t2r+" r2t-"+infra.r2t+" rcv-"+infra.received);
 
+    }
+    public void resetInfra(){
+        infra.resetInfra();
+        senderSimulator.TO_BE_SENT.clear();
+        senderSimulator.setSendNext(0);
+        senderSimulator.settSeq(0);
+        receiverSimulator.setrSeq(0);
     }
 }

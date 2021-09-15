@@ -43,6 +43,10 @@ public class AbpSender {
         return Arrays.equals(infra.received.toArray(), TO_BE_SENT.toArray());
     }
 
+    public int gettSeq() {return tSeq; }
+    public void settSeq(int tSeq) { this.tSeq = tSeq;  }
+    public int getSendNext() { return sendNext; }
+    public void setSendNext(int sendNext) { this.sendNext = sendNext; }
     public void runSender(AbpInfra getInfra, AbpInfra.states senderState) {
 
         infra = getInfra;
