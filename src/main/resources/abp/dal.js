@@ -7,6 +7,7 @@ ctx.populateContext([
     send_next: 0,
     received: [],
     TO_BE_SEND: [],
+    // TO_BE_SEND: ['A', 'B', 'C'],
     SEQ_MAX: 2,
     CHN_SIZE: 2,
     CHN_LOSS: true,
@@ -36,10 +37,10 @@ ctx.registerQuery('t2r_loss', function (entity) {
 ctx.registerQuery('r2t_loss', function (entity) {
   return entity.r2t.length > 0 && entity.CHN_LOSS
 })
-ctx.registerQuery('t2r_reordered', function (entity) {
+ctx.registerQuery('t2r_reorder', function (entity) {
   return entity.t2r.length > 0 && entity.CHN_REORDERED
 })
-ctx.registerQuery('r2t_reordered', function (entity) {
+ctx.registerQuery('r2t_reorder', function (entity) {
   return entity.r2t.length > 0 && entity.CHN_REORDERED
 })
 

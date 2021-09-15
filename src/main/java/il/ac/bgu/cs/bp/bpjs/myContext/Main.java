@@ -2,16 +2,15 @@ package il.ac.bgu.cs.bp.bpjs.myContext;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import il.ac.bgu.cs.bp.bpjs.execution.listeners.InMemoryEventLoggingListener;
 import il.ac.bgu.cs.bp.bpjs.myContext.myAbp.AbpActuator;
+import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
-import java.util.PriorityQueue;
 
 
 import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
@@ -26,7 +25,6 @@ import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.StudentNetworkSimulator;
 import il.ac.bgu.cs.bp.bpjs.myContext.AlternatingBit.TestElement;
 import il.ac.bgu.cs.bp.bpjs.myContext.TicTacToe.TicTacToeGameMain;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
-import il.ac.bgu.cs.bp.statespacemapper.exports.DotExporter;
 import jdk.jfr.Timestamp;
 
 
@@ -60,12 +58,15 @@ public class Main {
   
   public static void main(final String[] args) throws Exception {
 
+      Set<List<BEvent>> samples = new HashSet<>();
+
       List<String> files =
           Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(example.name())).toURI()).toFile().listFiles()))
               .map(f -> String.join("/", example.name(), f.getName()))
               .collect(Collectors.toList());
       System.out.println("files-"+files);
       BProgram bprog = new ContextBProgram(files);
+//      BProgram bprog = new ContextBProgram("abp/dal.js","abp/bl.js");
       final BProgramRunner rnr = new BProgramRunner(bprog);
       rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
 
@@ -78,33 +79,35 @@ public class Main {
       } if (example == Example.abp) {
         rnr.addListener(new AbpActuator());
       } if (example == Example.abpStudents) {
-        rnr.addListener(new AlternatingBitActuator()); 
+        rnr.addListener(new AlternatingBitActuator());
       }
-
+      var eventLogger = rnr.addListener(new InMemoryEventLoggingListener());
       rnr.run();
+      samples.add(eventLogger.getEvents());
 
-    //   System.out.println("// start");
-    //   String name = "abp";
-    // // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
-    //   BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
 
-    //   // You can use a different EventSelectionStrategy, for example:
-    //   /* var ess = new PrioritizedBSyncEventSelectionStrategy();
-    //   bprog.setEventSelectionStrategy(ess); */
-    //   StateSpaceMapper mpr = new StateSpaceMapper();
-    //   mpr.setMaxTraceLength(6);
-    //   var res = mpr.mapSpace(bprog);
-    //   System.out.println("// completed mapping the states graph");
-    //   System.out.println(res.toString());
-
-    //   System.out.println("// Export to GraphViz...");
-    //   var outputDir = "exports";
-    //   var path = Paths.get(outputDir, name + ".dot").toString();
-    //   new DotExporter(res,path,name).export();
-
-    //   System.out.println("// done");
-
-      System.exit(0);
+//       System.out.println("// start");
+//       String name = "abp";
+//     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
+//       BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
+//
+//       // You can use a different EventSelectionStrategy, for example:
+//       /* var ess = new PrioritizedBSyncEventSelectionStrategy();
+//       bprog.setEventSelectionStrategy(ess); */
+//       StateSpaceMapper mpr = new StateSpaceMapper();
+//       mpr.setMaxTraceLength(6);
+//       var res = mpr.mapSpace(bprog);
+//       System.out.println("// completed mapping the states graph");
+//       System.out.println(res.toString());
+//
+//       System.out.println("// Export to GraphViz...");
+//       var outputDir = "exports";
+//       var path = Paths.get(outputDir, name + ".dot").toString();
+//       new DotExporter(res,path,name).export();
+//
+//       System.out.println("// done");
+//
+//      System.exit(0);
   }
 
   

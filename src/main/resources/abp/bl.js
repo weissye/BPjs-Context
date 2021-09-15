@@ -41,13 +41,13 @@ ctx.bthread('T2rLoss', 't2r_loss', function (entity) {
   }
 })
 
-ctx.bthread('R2tReorder', 'r2t_reordered', function (entity) {
+ctx.bthread('R2tReorder', 'r2t_reorder', function (entity) {
   while (true) {
     sync({request: Event('r2tReorder')})
   }
 })
 
-ctx.bthread('T2rReorder', 't2r_reordered', function (entity) {
+ctx.bthread('T2rReorder', 't2r_reorder', function (entity) {
   while (true) {
     sync({request: Event('t2rReorder')})
   }

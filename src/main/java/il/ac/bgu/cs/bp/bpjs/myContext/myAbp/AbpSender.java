@@ -65,6 +65,9 @@ public class AbpSender {
                     receiveAckNok();
                     System.out.println("//receiveAckNok");
                 }
+                else {
+                    //exception
+                }
                 break;
             case T2RLOSS:
                 if (ifLostT2r()) {

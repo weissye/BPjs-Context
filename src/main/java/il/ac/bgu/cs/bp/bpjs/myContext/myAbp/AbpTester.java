@@ -85,8 +85,8 @@ public class AbpTester {
         else {
             senderSimulator.runSender(infra, senderState);
         }
-//        System.out.println("nextInput-"+nextInput+" senderState-"+senderState+" receiverState-"+receiverState);
-//        System.out.println("TBS-"+senderSimulator.TO_BE_SENT+" t2r-"+infra.t2r+" r2t-"+infra.r2t+" rcv-"+infra.received);
+        System.out.println("nextInput-"+nextInput+" senderState-"+senderState+" receiverState-"+receiverState);
+        System.out.println("TBS-"+senderSimulator.TO_BE_SENT+" t2r-"+infra.t2r+" r2t-"+infra.r2t+" rcv-"+infra.received);
 
     }
 }

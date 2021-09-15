@@ -3,8 +3,8 @@
 //   sync({request: bp.Event('startSimulator')})
 // })
 bthread('DataToBeSend', function (entity) {
-    sync({request: bp.Event('dataToBeSend', {info:"A"}), block: bp.Event("success")})
-    sync({request: bp.Event('dataToBeSend', {info:"B"})})
+    sync({request: bp.Event('dataToBeSend', {info:"A"}), block: bp.Event('dataToBeSend', {info:"A"}).negate()})
+    sync({request: bp.Event('dataToBeSend', {info:"B"}), block: bp.Event('dataToBeSend', {info:"B"}).negate()})
     sync({request: bp.Event('dataToBeSend', {info:"C"})})
     sync({request: bp.Event('dataToBeSend', {info:"D"})})
     sync({request: bp.Event('dataToBeSend', {info:"E"})})
