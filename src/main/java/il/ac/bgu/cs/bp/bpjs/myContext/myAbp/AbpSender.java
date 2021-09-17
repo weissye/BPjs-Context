@@ -12,8 +12,11 @@ public class AbpSender {
     private int sendNext = 0;
 
     private AbpInfra infra = new AbpInfra();
+    public List<String> TO_BE_SENT = new ArrayList<String>();
 
-    List<String> TO_BE_SENT = new ArrayList<String>();
+    public List<String> getTO_BE_SENT() { return TO_BE_SENT; }
+    public void setTO_BE_SENT(List<String> TO_BE_SENT) { this.TO_BE_SENT = TO_BE_SENT; }
+    public void clearTO_BE_SENT() { TO_BE_SENT.clear(); }
 
     public AbpSender() {
         super();

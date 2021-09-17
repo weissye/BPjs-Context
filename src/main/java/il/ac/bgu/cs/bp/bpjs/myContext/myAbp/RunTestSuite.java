@@ -19,13 +19,7 @@ public class RunTestSuite {
 
         List<String> list = new ArrayList<>();
 
-        abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "A");
-        abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "B");
-        abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "C");
-        abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "D");
-        abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "E");
-        abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "V");
-
+        abpTester.senderSimulator.setTO_BE_SENT(List.of("A","B","C","D","E","V"));
 
         try (BufferedReader br = new BufferedReader(new FileReader("BestTestSuite.txt"))) {
             list = br.lines().collect(Collectors.toList());
@@ -47,12 +41,7 @@ public class RunTestSuite {
                     }
                 }
                 abpTester.resetInfra();
-                abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "A");
-                abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "B");
-                abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "C");
-                abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "D");
-                abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "E");
-                abpTester.abpSimulator( AbpInfra.externalInput.TOSEND, "V");
+                abpTester.senderSimulator.setTO_BE_SENT(List.of("A","B","C","D","E","V"));
 
             }
 

@@ -56,12 +56,11 @@ ctx.bthread('T2rReorder', 't2r_reorder', function (entity) {
 ctx.bthread('T_success', 'T_SUCCESS', function (entity) {
   sync({request: Event('success')})
   bp.log.info("Effect for success, e={0}", entity);
-
 //  if (use_accepting_states) {
 //    // AcceptingState.Continuing()
 //    AcceptingState.Stopping()
 //  }
-   sync({block: bp.all})
+//    sync({block: bp.all})
 })
 ctx.bthread('T_dup_error', 'T_DUP_ERROR', function (entity) {
   sync({request: Event('dup_error')})

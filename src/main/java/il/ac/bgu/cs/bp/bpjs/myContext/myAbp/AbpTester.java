@@ -8,7 +8,7 @@ public class AbpTester {
     private AbpInfra.states senderState = AbpInfra.states.NONE;
     private AbpInfra.states receiverState = AbpInfra.states.NONE;
 
-    private AbpSender senderSimulator = new AbpSender();
+    public AbpSender senderSimulator = new AbpSender();
     private AbpReceiver receiverSimulator = new AbpReceiver();
     private final AbpInfra infra = new AbpInfra();
 
@@ -94,7 +94,7 @@ public class AbpTester {
     }
     public void resetInfra(){
         infra.resetInfra();
-        senderSimulator.TO_BE_SENT.clear();
+//        senderSimulator.clearTO_BE_SENT();
         senderSimulator.setSendNext(0);
         senderSimulator.settSeq(0);
         receiverSimulator.setrSeq(0);
