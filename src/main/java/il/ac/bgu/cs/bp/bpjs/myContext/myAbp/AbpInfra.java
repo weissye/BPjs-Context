@@ -4,8 +4,18 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class AbpInfra {
+
+    @Override
+    public String toString() {
+        return "AbpInfra{" +
+                "t2r=" + t2r.toString() +
+                ", r2t=" + r2t.toString() +
+                ", received=" + received.toString() +
+                '}';
+    }
 
     public AbpInfra() {
     }
@@ -20,10 +30,10 @@ public class AbpInfra {
     EnumSet<states> receiveStates = EnumSet.range(states.RECACK, states.R2TREORDER);
 
     enum externalInput {
-        NONE, TOSEND, SEND, ACKOK, ACKNOK, T2RLOSS, T2RREORDER, FINISH, SUCCESS,  RECACK, RECNAK, R2TLOSS, R2TREORDER ;
+        NONE, TOSEND, SEND, ACKOK, ACKNOK, T2RLOSS, T2RREORDER, FINISH, SUCCESS, FAIL,  RECACK, RECNAK, R2TLOSS, R2TREORDER ;
     }
-    private int SEQ_MAX = 2;
-    private int CHN_SIZE = 2;
+    private int SEQ_MAX = 2; // should be 2
+    private int CHN_SIZE = 2; // should be 2
     private boolean CHN_LOSS = true;
     private boolean CHN_REORDER = true;
 
@@ -32,12 +42,8 @@ public class AbpInfra {
     Queue<String> received = new LinkedList<String>();
 
     private externalInput nextInput = externalInput.NONE;
-    public externalInput getNextInput() {
-        return nextInput;
-    }
-    public void setNextInput(externalInput xNextInput) {
-        nextInput = xNextInput;
-    }
+    public externalInput prevInput = externalInput.NONE;
+
     public int getSEQ_MAX() {
         return SEQ_MAX;
     }
@@ -66,10 +72,6 @@ public class AbpInfra {
         return CHN_REORDER;
     }
 
-    public void setCHN_REORDER(boolean CHN_REORDER) {
-        this.CHN_REORDER = CHN_REORDER;
-    }
-
     static void reversequeue(Queue<L3Msg> queue)
     {
         Stack<L3Msg> stack = new Stack<>();
@@ -87,8 +89,9 @@ public class AbpInfra {
         t2r.clear();
         received.clear();
         nextInput = externalInput.NONE;
-
+        prevInput = externalInput.NONE;
 
     }
+
 
 }

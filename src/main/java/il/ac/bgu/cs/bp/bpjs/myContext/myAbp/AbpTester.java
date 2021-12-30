@@ -20,6 +20,7 @@ public class AbpTester {
         String newData = (data.length >= 1) ? data[0] : "";
 
         if (nextInput != AbpInfra.externalInput.NONE) {
+//            System.out.println("Now play - "+nextInput);
             switch (nextInput) {
                 case TOSEND:
                     senderSimulator.TO_BE_SENT.add(newData);
@@ -70,6 +71,7 @@ public class AbpTester {
                     isReceiver = true;
                     break;
                 case FINISH:
+                case FAIL:
                 case SUCCESS:
                     receiverState = AbpInfra.states.NONE;
                     senderState = AbpInfra.states.FINISH;
@@ -88,8 +90,11 @@ public class AbpTester {
         else {
             senderSimulator.runSender(infra, senderState);
         }
-        System.out.println("nextInput-"+nextInput+" senderState-"+senderState+" receiverState-"+receiverState);
-        System.out.println("TBS-"+senderSimulator.TO_BE_SENT+" t2r-"+infra.t2r+" r2t-"+infra.r2t+" rcv-"+infra.received);
+        infra.prevInput = nextInput;
+        receiverState = AbpInfra.states.NONE;
+        senderState = AbpInfra.states.NONE;
+//        System.out.println("nextInput-"+nextInput+" senderState-"+senderState+" receiverState-"+receiverState);
+//        System.out.println("TBS-"+senderSimulator.TO_BE_SENT+" t2r-"+infra.t2r+" r2t-"+infra.r2t+" rcv-"+infra.received);
 
     }
     public void resetInfra(){

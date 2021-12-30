@@ -21,19 +21,21 @@ public class RunTestSuite {
 
         abpTester.senderSimulator.setTO_BE_SENT(List.of("A","B","C","D","E","V"));
 
+//        try (BufferedReader br = new BufferedReader(new FileReader("KhunTestSuite.txt"))) {
         try (BufferedReader br = new BufferedReader(new FileReader("BestTestSuite.txt"))) {
+//        try (BufferedReader br = new BufferedReader(new FileReader("Bug.txt"))) {
             list = br.lines().collect(Collectors.toList());
-            ListIterator<String> iterator = list.listIterator(1);
+            ListIterator<String> iterator = list.listIterator(0);
 
             // Printing the iterated value
-            System.out.println("\nUsing ListIterator"
-                    + " from Index 1:\n");
+            System.out.println("\nUsing ListIterator"+" from Index 1:\n");
             while (iterator.hasNext()) {
                 String events = iterator.next();
-
                 List<String> eventsList = Stream.of(events.split(",", -1))
                                           .collect(Collectors.toList());
-                ListIterator<String> iterator2 = eventsList.listIterator(1);
+//                System.out.println("events-"+events.toString());
+
+                ListIterator<String> iterator2 = eventsList.listIterator();
                 while (iterator2.hasNext()) {
                     String eventName = iterator2.next();
                     if (! eventName.startsWith("Goal")){
@@ -42,10 +44,9 @@ public class RunTestSuite {
                 }
                 abpTester.resetInfra();
                 abpTester.senderSimulator.setTO_BE_SENT(List.of("A","B","C","D","E","V"));
+//                abpTester.senderSimulator.setTO_BE_SENT(List.of("A","B","C","D","E","V","K","X"));
 
             }
-
         }
-
     }
 }

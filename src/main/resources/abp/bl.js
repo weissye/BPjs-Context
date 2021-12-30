@@ -60,7 +60,7 @@ ctx.bthread('T_success', 'T_SUCCESS', function (entity) {
 //    // AcceptingState.Continuing()
 //    AcceptingState.Stopping()
 //  }
-//    sync({block: bp.all})
+   sync({block: bp.all})
 })
 ctx.bthread('T_dup_error', 'T_DUP_ERROR', function (entity) {
   sync({request: Event('dup_error')})

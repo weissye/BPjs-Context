@@ -28,4 +28,12 @@ public class L3Msg {
     public void setData(String data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "L3Msg{" +
+                "secNo=" + secNo +
+                ", data='" + data + '\'' +
+                '}';
+    }
 }

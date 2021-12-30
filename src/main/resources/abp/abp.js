@@ -1,3 +1,110 @@
+bp.log.setLevel("Off");
+//---------------------------------------------
+// bthread('DataToBeSend', function (entity) {
+//   sync({request: bp.Event('dataToBeSend', {info:"A"}), block: bp.Event('dataToBeSend', {info:"A"}).negate()})
+//   sync({request: bp.Event('dataToBeSend', {info:"B"}), block: bp.Event('dataToBeSend', {info:"B"}).negate()})
+//   sync({request: bp.Event('dataToBeSend', {info:"C"})})
+//   sync({request: bp.Event('dataToBeSend', {info:"D"})})
+//   sync({request: bp.Event('dataToBeSend', {info:"E"})})
+//   sync({request: bp.Event('dataToBeSend', {info:"V"})})
+// })
+
+//----------------------------------------
+
+ctx.bthread('Send', 't_send', function (entity) {
+  while (true) {
+    sync({request: Event('send')})
+  }
+})
+
+ctx.bthread('AckOk', 't_ackOk', function (entity) {
+  while (true) {
+    sync({request: Event('ackOk')})
+  }
+})
+
+ctx.bthread('AckNok', 't_ackNok', function (entity) {
+  while (true) {
+    sync({request: Event('ackNok')})
+  }
+})
+
+ctx.bthread('RecAck', 'r_recAck', function (entity) {
+  while (true) {
+    sync({request: Event('recAck')})
+  }
+})
+
+ctx.bthread('RecNak', 'r_recNak', function (entity) {
+  while (true) {
+    sync({request: Event('recNak')})
+  }
+})
+
+ctx.bthread('R2tLoss', 'r2t_loss', function (entity) {
+  while (true) {
+    sync({request: Event('r2tLoss')})
+  }
+})
+
+ctx.bthread('T2rLoss', 't2r_loss', function (entity) {
+  while (true) {
+    sync({request: Event('t2rLoss')})
+  }
+})
+
+ctx.bthread('R2tReorder', 'r2t_reorder', function (entity) {
+  while (true) {
+    sync({request: Event('r2tReorder')})
+  }
+})
+
+ctx.bthread('T2rReorder', 't2r_reorder', function (entity) {
+  while (true) {
+    sync({request: Event('t2rReorder')})
+  }
+})
+ctx.bthread('T_success', 'T_SUCCESS', function (entity) {
+  sync({request: Event('success')})
+  bp.log.info("Effect for success, e={0}", entity);
+
+  if (use_accepting_states) {
+    // AcceptingState.Continuing()
+    AcceptingState.Stopping()
+  }
+// -----------------------------------
+//    sync({block: bp.all})
+})
+  ctx.bthread('T_fail', 'T_FAIL', function (entity) {
+    // sync({request: Event('fail TBS='+entity.TO_BE_SEND.toString()+" Rcv="+entity.received.toString())})
+    sync({request: Event('fail')})
+    bp.log.info("Effect for fail, e={0}", entity);
+
+  if (use_accepting_states) {
+    // AcceptingState.Continuing()
+    AcceptingState.Stopping()
+  }
+// -----------------------------------
+//    sync({block: bp.all})
+})
+ctx.bthread('T_dup_error', 'T_DUP_ERROR', function (entity) {
+  sync({request: Event('dup_error')})
+//  if (use_accepting_states) {
+//    // AcceptingState.Continuing()
+//    AcceptingState.Stopping()
+//  }
+//    sync({block: bp.all})
+})
+ctx.bthread('T_lost_error', 'T_LOST_ERROR', function (entity) {
+  sync({request: Event('lostError')})
+//  if (use_accepting_states) {
+//    // AcceptingState.Continuing()
+//    AcceptingState.Stopping()
+//  }
+//    sync({block: bp.all})
+})
+
+//----------------------------------------
 ctx.populateContext([
   ctx.Entity("abpData", "abp", {
     t_seq: 0,
@@ -6,10 +113,10 @@ ctx.populateContext([
     r2t: [],
     send_next: 0,
     received: [],
-    TO_BE_SEND: [],
-    // TO_BE_SEND: ['A', 'B', 'C'],
+    // TO_BE_SEND: [],
+    TO_BE_SEND: ['A', 'B', 'C', 'D', 'E', 'V'],
     SEQ_MAX: 2,
-    CHN_SIZE: 3,
+    CHN_SIZE: 2,
     CHN_LOSS: true,
     CHN_REORDERED: true
   })
@@ -32,30 +139,30 @@ ctx.registerQuery('r_recNak', function (entity) {
   return entity.t2r.length > 0 && entity.t2r[0][0] != entity.r_seq && entity.r2t.length < entity.CHN_SIZE
 })
 ctx.registerQuery('t2r_loss', function (entity) {
-  return entity.t2r.length > 0 && entity.CHN_LOSS
+  return entity.t2r.length > 1 && entity.CHN_LOSS
 })
 ctx.registerQuery('r2t_loss', function (entity) {
   return entity.r2t.length > 0 && entity.CHN_LOSS
 })
 ctx.registerQuery('t2r_reorder', function (entity) {
-  return entity.t2r.length > 0 && entity.CHN_REORDERED
+  return entity.t2r.length > 1 && entity.CHN_REORDERED
 })
 ctx.registerQuery('r2t_reorder', function (entity) {
-  return entity.r2t.length > 0 && entity.CHN_REORDERED
+  return entity.r2t.length > 1 && entity.CHN_REORDERED
 })
 
 ctx.registerQuery('T_SUCCESS', function (entity) {
-  return entity.send_next==entity.TO_BE_SEND.length && entity.received.toString() == entity.TO_BE_SEND.toString()
+  return entity.send_next == entity.TO_BE_SEND.length && entity.TO_BE_SEND.toString() == entity.received.toString()
 })
-ctx.registerQuery('T_FAIL', function (entity) {
-  return entity.send_next==entity.TO_BE_SEND.length && entity.received.toString() != entity.TO_BE_SEND.toString()
+  ctx.registerQuery('T_FAIL', function (entity) {
+    return entity.send_next==entity.TO_BE_SEND.length && entity.received.toString() != entity.TO_BE_SEND.toString()
+  })
+ctx.registerQuery('T_DUP_ERROR', function (entity) {
+  return entity.received.filter(x => x == 'a').length > 1 || entity.received.filter(x => x == 'b').length > 1 || entity.received.filter(x => x == 'c').length > 1
 })
-// ctx.registerQuery('T_DUP_ERROR', function (entity) {
-//   return entity.received.filter(x => x == 'a').length > 1 || entity.received.filter(x => x == 'b').length > 1 || entity.received.filter(x => x == 'c').length > 1
-// })
-// ctx.registerQuery('T_LOST_ERROR', function (entity) {
-//   return (entity.received.includes(String('b')) || entity.received.includes(String('c'))) && !entity.received.includes(String('a'))
-// })
+ctx.registerQuery('T_LOST_ERROR', function (entity) {
+  return (entity.received.includes(String('b')) || entity.received.includes(String('c'))) && !entity.received.includes(String('a'))
+})
 
 
 ctx.registerEffect('send', function () {
@@ -126,11 +233,10 @@ ctx.registerEffect('r2tReorder', function (e) {
   // bp.log.info("Effect for r2tReorder, e={0}", e);
   ctx.updateEntity(e)
 })
-
 ctx.registerEffect('dataToBeSend', function (eventData) {
   e = ctx.getEntityById('abpData')
   e.TO_BE_SEND.push(eventData.info)
-   // bp.log.info("Effect for dataToBeSend, ee.data={0}", e);
+  // bp.log.info("Effect for dataToBeSend, ee.data={0}", e);
   ctx.updateEntity(e)
 })
 ctx.registerEffect('doT2rLost', function () {
@@ -153,5 +259,3 @@ ctx.registerEffect('doR2tReorder', function () {
   // bp.log.info("Effect for doR2tReorder, e.data={0}", e);
   ctx.updateEntity(e)
 })
-
-

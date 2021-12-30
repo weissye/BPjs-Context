@@ -34,7 +34,7 @@ public class AbpActuator extends BProgramRunnerListenerAdapter {
       nextEvent = AbpInfra.externalInput.T2RLOSS;
     } else if (e.name.equals("r2tLoss")) {
       nextEvent = AbpInfra.externalInput.R2TLOSS;
-    } else if (e.name.equals("t2rReordered")) {
+    } else if (e.name.equals("t2rReorder")) {
       nextEvent = AbpInfra.externalInput.T2RREORDER;
     } else if (e.name.equals("r2tReorder")) {
       nextEvent = AbpInfra.externalInput.R2TREORDER;

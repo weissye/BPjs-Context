@@ -31,9 +31,11 @@ public class AbpSender {
         return (infra.t2r.size() < infra.getCHN_SIZE() && sendNext < TO_BE_SENT.size());
     }
     public boolean getAckOk(){
+//        return (!infra.r2t.isEmpty() && infra.r2t.peek().getSecNo() == (tSeq+1)%infra.getSEQ_MAX());
         return (!infra.r2t.isEmpty() && infra.r2t.peek().getSecNo() == (tSeq+1)%infra.getSEQ_MAX());
     }
     public boolean getAckNok(){
+//        return (!infra.r2t.isEmpty() && infra.r2t.peek().getSecNo() != (tSeq+1)%infra.getSEQ_MAX());
         return (!infra.r2t.isEmpty() && infra.r2t.peek().getSecNo() != (tSeq+1)%infra.getSEQ_MAX());
     }
     public boolean ifLostT2r(){
@@ -50,6 +52,7 @@ public class AbpSender {
     public void settSeq(int tSeq) { this.tSeq = tSeq;  }
     public int getSendNext() { return sendNext; }
     public void setSendNext(int sendNext) { this.sendNext = sendNext; }
+    
     public void runSender(AbpInfra getInfra, AbpInfra.states senderState) {
 
         infra = getInfra;
@@ -58,44 +61,69 @@ public class AbpSender {
             case SEND:
                 if (haveToSend())  {
                     sendData(TO_BE_SENT.get(sendNext));
-                    System.out.println("//send-" + TO_BE_SENT.get(sendNext));
+                    System.out.println("//Send-" + TO_BE_SENT.get(sendNext)+" "+infra.toString()+" tSeq-"+tSeq);
                 }
+                else {
+                    System.out.println("//No Send "+infra.toString()+" tSeq-"+tSeq);
+
+//                    throw new RuntimeException("fail to //send-" + TO_BE_SENT.get(sendNext));
+                }
+
                 break;
             case ACKOK:
                 if (getAckOk()) {
-                    receivedAckOk();
-                    System.out.println("//receivedAckOk");
+                        receivedAckOk();
+                    System.out.println("//receivedAckOk "+infra.toString()+" tSeq-"+tSeq+" ");
                 }
+                else {
+                    System.out.println("//No receivedAckOk "+infra.toString()+" tSeq-"+tSeq+" ");
+//                    throw new RuntimeException("fail to //receivedAckOk");
+                }
+
                 break;
             case ACKNOK:
                 if (getAckNok()) {
-                    receiveAckNok();
-                    System.out.println("//receiveAckNok");
+//                    if (infra.prevInput != AbpInfra.externalInput.R2TREORDER)
+                        receiveAckNok();
+                    System.out.println("//receiveAckNok "+infra.toString()+" tSeq-"+tSeq+" ");
                 }
                 else {
-                    //exception
+                    System.out.println("//No receiveAckNok "+infra.toString()+" tSeq-"+tSeq+" ");
+//                    throw new RuntimeException("fail to //receiveAckNok");
                 }
                 break;
             case T2RLOSS:
                 if (ifLostT2r()) {
                     lostT2r();
-                    System.out.println("//T2RLOSS");
+                    System.out.println("//T2RLOSS "+infra.toString()+" tSeq-"+tSeq+" ");
+                }
+                else {
+                    System.out.println("//No T2RLOSS "+infra.toString()+" tSeq-"+tSeq+" ");
+//                    throw new RuntimeException("fail to //T2RLOSS");
                 }
                 break;
             case T2RREORDER:
                 if (ifReorderT2r()) {
                     reorderT2r();
-                    System.out.println("//T2RREORDER");
+                    System.out.println("//T2RREORDER "+infra.toString()+" tSeq-"+tSeq+" ");
+                }
+                else {
+                    System.out.println("//No T2RREORDER "+infra.toString()+" tSeq-"+tSeq+" ");
+//                    System.out.println("Received-"+infra.received.toString());
+//                    throw new RuntimeException("fail to //T2RREORDER");
                 }
                 break;
             case FINISH:
                 if (sendNext == TO_BE_SENT.size()){
                     if (chckEndingStatus()) {
-                        System.out.println("//Success - TO_BE_SEND-"+TO_BE_SENT+" Received-"+infra.received);
+                        System.out.println("//Success - TO_BE_SEND-"+TO_BE_SENT+" Received-"+infra.received+" "+infra.toString()+" tSeq-"+tSeq+" ");
                         senderState = FINISH;
                     }
                     else
                         System.out.println("//Failed- "+infra.received);
+                }
+                else{
+                    System.out.println("//Fail - received-"+infra.received+" sendNext-"+sendNext+" size()-"+TO_BE_SENT.size());
                 }
                 break;
 
@@ -104,27 +132,28 @@ public class AbpSender {
     }
 
     public void sendData(String data) {
-        System.out.println("//Sent-"+ data);
+//        System.out.println("//Sent-"+ data);
         L3Msg t = new L3Msg(tSeq, data);
         infra.t2r.add(t);
     }
     public void receivedAckOk(){
-        System.out.println("//receivedAckOk");
+//        System.out.println("//receivedAckOk");
         infra.r2t.remove();
         tSeq = (tSeq + 1) % infra.getSEQ_MAX();
         sendNext += 1;
+
     }
     public void receiveAckNok(){
-        System.out.println("//receiveAckNok");
+//        System.out.println("//receiveAckNok");
         infra.r2t.remove();
     }
 
     public void lostT2r(){
-        System.out.println("//lostT2r");
+//        System.out.println("//lostT2r");
         infra.t2r.remove();
     }
     public void reorderT2r() {
-        System.out.println("//reorderT2r");
+//        System.out.println("//reorderT2r");
         infra.reversequeue(infra.t2r);
     }
 

@@ -36,7 +36,8 @@ public class Main {
 
   private static final Example example =
 //  Example.abpStudents;
-   Example.abp;
+//          Example.abp;
+    Example.Bereshit;
   //  Example.HotCold;
   //  Example.SampleProgram;
 //      Example.SampleProgram;
@@ -66,6 +67,7 @@ public class Main {
               .collect(Collectors.toList());
       System.out.println("files-"+files);
       BProgram bprog = new ContextBProgram(files);
+//      BProgram bprog = new ContextBProgram("abp/abp.js");
 //      BProgram bprog = new ContextBProgram("abp/dal.js","abp/bl.js");
       final BProgramRunner rnr = new BProgramRunner(bprog);
       rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
@@ -85,17 +87,23 @@ public class Main {
       rnr.run();
       samples.add(eventLogger.getEvents());
 
-
+//
 //       System.out.println("// start");
-//       String name = "abp";
+////      String name = "abp";
+//      String name = "Bereshit";
 //     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
 //       BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
+////       BProgram bprog = new ContextBProgram(name + "/abp.js");
 //
 //       // You can use a different EventSelectionStrategy, for example:
 //       /* var ess = new PrioritizedBSyncEventSelectionStrategy();
 //       bprog.setEventSelectionStrategy(ess); */
 //       StateSpaceMapper mpr = new StateSpaceMapper();
-//       mpr.setMaxTraceLength(6);
+//       mpr.setMaxTraceLength(15Bereshit
+//
+//
+//
+//       );
 //       var res = mpr.mapSpace(bprog);
 //       System.out.println("// completed mapping the states graph");
 //       System.out.println(res.toString());
@@ -106,8 +114,8 @@ public class Main {
 //       new DotExporter(res,path,name).export();
 //
 //       System.out.println("// done");
-//
-//      System.exit(0);
+
+      System.exit(0);
   }
 
   
