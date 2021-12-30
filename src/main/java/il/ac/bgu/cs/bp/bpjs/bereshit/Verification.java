@@ -1,4 +1,4 @@
-package il.ac.bgu.cs.bp.bpjs.myContext;
+package il.ac.bgu.cs.bp.bpjs.bereshit;
 
 import il.ac.bgu.cs.bp.bpjs.analysis.DfsBProgramVerifier;
 import il.ac.bgu.cs.bp.bpjs.analysis.listeners.PrintDfsVerifierListener;
