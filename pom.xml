@@ -6,7 +6,7 @@
 
     <!-- Change these to match your group and artifact IDs -->
     <groupId>il.ac.bgu.cs.bp.bpjs</groupId>
-    <artifactId>myContext</artifactId>
+    <artifactId>Bereshit</artifactId>
     <!-- / Change these to match your group and artifact IDs -->
     <version>0.1-DEV</version>
     <packaging>jar</packaging>
