@@ -1,4 +1,4 @@
-# BP-for-BERSHIT: An experiment in requirements modeling 
+# BP-for-BERESHEET: An experiment in requirements modeling 
 
 This repository contains a model and analysis scripts for verification of the lander logic in the BERESHIT project.
 
