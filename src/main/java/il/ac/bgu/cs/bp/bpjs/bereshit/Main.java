@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import il.ac.bgu.cs.bp.bpjs.context.PrintCOBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.InMemoryEventLoggingListener;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
@@ -16,7 +15,6 @@ import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
 
 
 import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
-import il.ac.bgu.cs.bp.bpjs.context.PrintCOBProgramRunnerListener.Level;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 
 
@@ -27,16 +25,6 @@ public class Main {
 
   private static final Example example =
     Example.Bereshit;
-
-  /**
-   * internal context events are: "CTX.Changed", "_____CTX_LOCK_____", "_____CTX_RELEASE_____"
-   * You can filter these event from printing on console using the Level:
-   * Level.ALL : print all
-   * Level.NONE : print none
-   * Level.CtxChanged: print only CTX.Changed events (i.e., filter the transaction lock/release events)
-   */
-  private static final Level logLevel = Level.ALL;
-
   
   public static void main(final String[] args) throws Exception {
 
@@ -62,7 +50,7 @@ public class Main {
       System.out.println("files-"+files);
       BProgram bprog = new ContextBProgram(files);
       final BProgramRunner rnr = new BProgramRunner(bprog);
-      rnr.addListener(new PrintCOBProgramRunnerListener(logLevel, new PrintBProgramRunnerListener()));
+      rnr.addListener(new PrintBProgramRunnerListener());
 
       if (example == Example.TicTacToe) {
 //        boolean useUI = true;

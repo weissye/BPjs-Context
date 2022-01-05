@@ -1,20 +1,21 @@
 //-----------------------------------------------
-bp.log.setLevel('Off')
+//bp.log.setLevel('Off')
 
 const AnyStrOn = bp.EventSet('AnyStrOn', e => e.name.startsWith('strOn'))
 const AnyThrusterOn = bp.EventSet('AnyThrusterOn', e => e.name.startsWith('thrusterOn'))
 const AnyOpenUpstreamValves = bp.EventSet('AnyOpenUpstreamValvesAnyOpenUpstreamValves', e => e.name.startsWith('openUpstream'))
 const AnyImuCalib = bp.EventSet('AnyImuCalib', e => e.name.startsWith('imuCalib'))
 
-function hardwareEvent(nama, data, isStart) {
+function hardwareEvent(name, data, isStart) {
   if (!data) data = {}
   data.start = isStart
   return Event(name, data)
 }
 
-function hardwareAction(nane, data, cond) {
+function hardwareAction(name, data, cond) {
   if (cond && cond())
     return
+  bp.log.info('hardwareAction ' + name+' '+data.no)
   sync({ request: hardwareEvent(name, data, true) })
   sync({ waitFor: hardwareEvent(name, data, false) })
 }
@@ -23,15 +24,19 @@ ctx.bthread('Init', 'init', function (entity) {
   bp.log.info('Init ' + entity.state)
 
   //Check IMU, if "off", turn "on". if not calibrate, calibrate.
-  for (imu in entity.imuStatus) {
-    bp.log.info('imu ' + imu)
-    hardwareAction('imuOn', { no: imu }, () => entity.imuStatus[imu].equals('on'))
-  }
+  // for (imu in entity.imuStatus) {
+  //   bp.log.info('imu ' + eImu)
+  //   // hardwareAction('imuOn', { no: imu }, () => entity.imuStatus[imu].equals('on'))
+  //   hardwareAction('imuOn', { no: eImu },  false)
+  //  }
+  sync({ request: Event('StartImuOn') })
 
-  for (str in entity.strStatus) {
-    if (entity.strStatus[str].equals('off'))   // maybee doesn't required
-      sync({ request: Event('strOn', { no: str }) })
-  }
+  // for (str in entity.strStatus) {
+  //   hardwareAction('strOn', { no: str }, () => entity.strStatus[str].equals('off'))
+  //
+  //   // if (entity.strStatus[str].equals('off'))   // maybee doesn't required
+  //   //   sync({ request: Event('strOn', { no: str }) })
+  // }
   for (thruster in entity.thrusterStatus) {
     if (entity.thrusterStatus[thruster].equals('off'))   // maybee doesn't required
       sync({ request: Event('thrusterOn', { no: thruster }) })
@@ -66,31 +71,48 @@ ctx.bthread('Init', 'init', function (entity) {
 
 })
 
+// ctx.bthread('imu Turn On', `turnImu`, function (imuData) {
+//   while(true) {
+//     sync({waitFor: Event('St`artImuOn')})
+//     bp.log.info('imu ' + imuData.id)
+//     // hardwareAction('imuOn', { no: imu }, () => entity.imuStatus[imu].equals('on'))
+//     hardwareAction('imuOn', {no: imuData.id}, false)
+//   }
+// })
+
+
 ctx.bthread('imu Turn On', 'imu', function (imuid) {
   while (true) {
-    sync({ waitFor: hardwareEvent('imuOn', { no: imuid }, true) })
+    sync({ waitFor: hardwareEvent('imuOn', { no: imuid.no }, true) })
     bp.log.info('in imuOn ' + imuid)
     // completed turn on imu[x] (triggers a ctx effect)
-    sync({ request: hardwareEvent('imuOn', { no: imuid }, false) })
+    sync({ request: hardwareEvent('imuOn', { no: imuid.no }, false) })
 
     //TODO check if calibration is initiated. if not - initiate it
   }
 })
 
-ctx.bthread('doImuCalib', 'imu Calib req', function (entity) {
+ctx.bthread('doImuCalib', 'uncalibrated imu', function (entity) {
   while (true) {
     //Do imu[x] calibration
     //reset calibration timeoute for imu[x]
-    sync({ request: Event('imuCalibrated', { no: entity.imuCurrentNo }) })
+    sync({ request: Event('imuCalibrated', { no: entity.no }) })
   }
 })
 
-bthread('str Turn On', function (entity) {
+ctx.bthread('str Turn On', 'str', function (strData) {
   while (true) {
-    e = sync({ waitFor: AnyStrOn })
-    //Do turn on str[x]
-    sync({ request: Event('strIsOn', { no: e.data.no }) })
+    sync({waitFor: hardwareEvent('strOn', {no: strData.id}, true)})
+    bp.log.info('in imuOn ' + entity.data.no)
+    // completed turn on str[x] (triggers a ctx effect)
+    sync({request: hardwareEvent('strOn', {no: strData.id}, false)})
   }
+
+
+  //   e = sync({ waitFor: AnyStrOn })
+  //   //Do turn on str[x]
+  //   sync({ request: Event('strIsOn', { no: e.data.no }) })
+  // }
 })
 
 bthread('thruster Turn On', function () {

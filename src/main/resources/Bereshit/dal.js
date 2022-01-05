@@ -1,11 +1,10 @@
-//----------------------------------------
-ctx.populateContext([
+let entities = [
   ctx.Entity('beresheetLander', 'beresheet', {
     state: 'Landing',
     prevState: 'PostSeparation',
     // imuStatus: ['off', 'off', 'off'],
     thrusterStatus: ['off', 'off'],
-    strStatus: ['off', 'off'],
+    // strStatus: ['off', 'off'],
     // imuCalibFlag: ['no', 'no', 'no'],
     valveStatus: ['open', 'open', 'close'],
     lulavStatus: 'on',
@@ -19,25 +18,40 @@ ctx.populateContext([
     requiredInertial3Axis: { x: 1, y: 2, z: 3 },
     requiredInertial3AxisTolerance: { x: 0.1, y: 0.1, z: 0.1 },
     PONR: false,
-    initState: true,
-    imuCurrentNo: 0
+    initState: true
+    // imuCurrentNo: 0
   })
-])
+]
 
 for (let i = 0; i < 3; i++) {
-  ctx.populateContext(ctx.Entity('imu' + i, 'imu', { id: i, isOn: false, isCalibrated: false }))
+  entities.push(ctx.Entity('imu' + i, 'imu', { no: i, isOn: false, isCalibrated: false }))
 }
+
+for (let i = 0; i < 2; i++) {
+  entities.push(ctx.Entity('str' + i, 'str', { no: i, isOn: false }))
+}
+
+ctx.populateContext(entities)
+
+// ctx.registerQuery('turnImu', function (entity) {
+//   return entity.type == 'imu' && !entity.isOn
+// })
+
 
 ctx.registerQuery('imu', function (entity) {
   return entity.type == 'imu'
 })
 
+ctx.registerQuery('str', function (entity) {
+  return entity.type == 'str'
+})
+
 ctx.registerQuery('init', function (entity) {
-  return entity.type == 'beresheet' && entity.state == 'Landing' && entity.initState
+  return entity.type == 'beresheet' && entity.state == 'Landing' && entity.initState //&& entity2.type == 'imu'
 })
 
 ctx.registerQuery('uncalibrated imu', function (entity) {
-  return entity.type == 'imu' && !entity.isCalibrated == 'Landing'
+  return entity.type == 'imu' && !entity.isCalibrated == true
 })
 
 ctx.registerQuery('init ended', function (entity) {
@@ -45,7 +59,7 @@ ctx.registerQuery('init ended', function (entity) {
 })
 
 ctx.registerQuery('oriantation', function (entity) {
-  return entity.state.equals('Landing') && GNCcheckOrientation()
+  return entity.state == 'Landing' && GNCcheckOrientation()
 })
 
 
@@ -58,19 +72,20 @@ ctx.registerEffect('initEnded', function (data) {
 ctx.registerEffect('imuOn', function (data) {
   if (!data.started) {
     bp.log.info('imuIsOn ' + data.no)
-    let e = ctx.getEntityById('beresheetLander')
-    e.imuStatus[data.no] = 'on'
-    e.imuCurrentNo = data.no                    //save current imu as context
+    let e = ctx.getEntityById('imu'+data.no)
+    e.isOn = true
     ctx.updateEntity(e)
   }
 
 })
 
 ctx.registerEffect('imuCalibrated', function (data) {
-  bp.log.info('imuCalibrated ' + data.no)
-  let e = ctx.getEntityById('beresheetLander')
-  e.imuCalibFlag[data.no] = 'yes'
-  ctx.updateEntity(e)
+  if (!data.started) {
+    bp.log.info('imuCalibrated ' + data.no)
+    let e = ctx.getEntityById('imu' + data.no)
+    e.isCalibrated = true
+    ctx.updateEntity(e)
+  }
 })
 
 ctx.registerEffect('strIsOn', function (data) {
