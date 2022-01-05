@@ -1,6 +1,6 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/java,intellij+all,visualstudiocode,macos
-# Edit at https://www.toptal.com/developers/gitignore?templates=java,intellij+all,visualstudiocode,macos
+# Created by https://www.toptal.com/developers/gitignore/api/maven,intellij+all,visualstudiocode,java,macos
+# Edit at https://www.toptal.com/developers/gitignore?templates=maven,intellij+all,visualstudiocode,java,macos
 
 ### Intellij+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -148,6 +148,26 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+# https://github.com/takari/maven-wrapper#usage-without-binary-jar
+.mvn/wrapper/maven-wrapper.jar
+
+### Maven Patch ###
+# Eclipse m2e generated files
+# Eclipse Core
+.project
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
@@ -167,4 +187,4 @@ Temporary Items
 # Support for Project snippet scope
 !.vscode/*.code-snippets
 
-# End of https://www.toptal.com/developers/gitignore/api/java,intellij+all,visualstudiocode,macos
+# End of https://www.toptal.com/developers/gitignore/api/maven,intellij+all,visualstudiocode,java,macos
