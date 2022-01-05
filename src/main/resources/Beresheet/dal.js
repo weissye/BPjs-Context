@@ -2,7 +2,7 @@ let entities = [
   ctx.Entity('beresheetLander', 'beresheet', {
     state: 'Landing',
     prevState: 'PostSeparation',
-    // imuStatus: ['off', 'off', 'off'],
+    imuIds: ['imu0', 'imu1', 'imu2'],
     thrusterStatus: ['off', 'off'],
     // strStatus: ['off', 'off'],
     // imuCalibFlag: ['no', 'no', 'no'],
@@ -24,11 +24,11 @@ let entities = [
 ]
 
 for (let i = 0; i < 3; i++) {
-  entities.push(ctx.Entity('imu' + i, 'imu', { no: i, isOn: false, isCalibrated: false }))
+  entities.push(ctx.Entity('imu' + i, 'imu', { no: i, shoudlBeOn:false, isOn: false, isCalibrated: false }))
 }
 
 for (let i = 0; i < 2; i++) {
-  entities.push(ctx.Entity('str' + i, 'str', { no: i, isOn: false }))
+  entities.push(ctx.Entity('str' + i, 'str', { no: i, shoudlBeOn:false, isOn: false }))
 }
 
 ctx.populateContext(entities)
@@ -40,6 +40,10 @@ ctx.populateContext(entities)
 
 ctx.registerQuery('imu', function (entity) {
   return entity.type == 'imu'
+})
+
+ctx.registerQuery('imu shouldBeOn && !isOn', function (entity) {
+  return entity.type == 'imu' && entity.shouldBeOn  && !entity.isOn
 })
 
 ctx.registerQuery('str', function (entity) {
@@ -69,14 +73,18 @@ ctx.registerEffect('initEnded', function (data) {
   ctx.updateEntity(e)
 })
 
-ctx.registerEffect('imuOn', function (data) {
+ctx.registerEffect('turn imu on', function (data) {
   if (!data.started) {
-    bp.log.info('imuIsOn ' + data.no)
     let e = ctx.getEntityById('imu'+data.no)
     e.isOn = true
     ctx.updateEntity(e)
   }
+})
 
+ctx.registerEffect('imu should be on', function (id) {
+    let e = ctx.getEntityById('imu'+id)
+    e.shouldBeOn = true
+    ctx.updateEntity(e)
 })
 
 ctx.registerEffect('imuCalibrated', function (data) {

@@ -11,7 +11,7 @@
     <version>0.1-DEV</version>
     <packaging>jar</packaging>
     <properties>
-        <exec.mainClass>il.ac.bgu.cs.bp.bpjs.bereshit.Main</exec.mainClass>
+        <exec.mainClass>il.ac.bgu.cs.bp.bpjs.beresheet.Main</exec.mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>

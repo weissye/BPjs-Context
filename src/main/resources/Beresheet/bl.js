@@ -1,3 +1,4 @@
+importPackage(Packages.il.ac.bgu.cs.bp.bpjs.beresheet);
 //-----------------------------------------------
 //bp.log.setLevel('Off')
 
@@ -6,30 +7,18 @@ const AnyThrusterOn = bp.EventSet('AnyThrusterOn', e => e.name.startsWith('thrus
 const AnyOpenUpstreamValves = bp.EventSet('AnyOpenUpstreamValvesAnyOpenUpstreamValves', e => e.name.startsWith('openUpstream'))
 const AnyImuCalib = bp.EventSet('AnyImuCalib', e => e.name.startsWith('imuCalib'))
 
-function hardwareEvent(name, data, isStart) {
-  if (!data) data = {}
-  data.start = isStart
-  return Event(name, data)
-}
-
-function hardwareAction(name, data, cond) {
-  if (cond && cond())
+function hardwareAction(name, data, waitForResult, preCondition) {
+  if (preCondition && preCondition())
     return
-  bp.log.info('hardwareAction ' + name+' '+data.no)
-  sync({ request: hardwareEvent(name, data, true) })
-  sync({ waitFor: hardwareEvent(name, data, false) })
+  bp.log.info('hardwareAction ' + name + ' ' + data.no)
+  sync({ request: HardwareEvent(name, data, true) })
+  sync({ waitFor: HardwareEvent(name, data, false) })
 }
 
 ctx.bthread('Init', 'init', function (entity) {
   bp.log.info('Init ' + entity.state)
 
-  //Check IMU, if "off", turn "on". if not calibrate, calibrate.
-  // for (imu in entity.imuStatus) {
-  //   bp.log.info('imu ' + eImu)
-  //   // hardwareAction('imuOn', { no: imu }, () => entity.imuStatus[imu].equals('on'))
-  //   hardwareAction('imuOn', { no: eImu },  false)
-  //  }
-  sync({ request: Event('StartImuOn') })
+  sync({request:HardwareEvent('turnOnAllImus', null, true)})
 
   // for (str in entity.strStatus) {
   //   hardwareAction('strOn', { no: str }, () => entity.strStatus[str].equals('off'))
@@ -80,15 +69,29 @@ ctx.bthread('Init', 'init', function (entity) {
 //   }
 // })
 
-
-ctx.bthread('imu Turn On', 'imu', function (imuid) {
+bthread('turn on all imus', function () {
   while (true) {
-    sync({ waitFor: hardwareEvent('imuOn', { no: imuid.no }, true) })
-    bp.log.info('in imuOn ' + imuid)
-    // completed turn on imu[x] (triggers a ctx effect)
-    sync({ request: hardwareEvent('imuOn', { no: imuid.no }, false) })
+    sync({ waitFor: HardwareEvent('turnOnAllImus', null, true) })
+    let num_imus = ctx.runQuery('imu').length
+    for (let i = 0; i < num_imus; i++) {
+      sync({ request: Event('imu should be on', ""+i) })
+    }
+  }
+})
 
-    //TODO check if calibration is initiated. if not - initiate it
+// TO GERA: the reason we added the query 'imu shouldBeOn && !isOn' and didn't insert the condition before requesting
+// Event('turnImuOn', id), is that we consider that it might get off at some point and we want to know that this state
+// is "unstable". See the HardwareEvent('calibrate imu'...) below.
+ctx.bthread('turn imu on', 'imu shouldBeOn && !isOn', function (imu) {
+  while (true) {
+    sync({ request: HardwareEvent('turn imu on', { no: imu.no }, true) })
+    sync({ waitFor: HardwareEvent('turn imu on', { no: imu.no }, false) }) //external event
+
+    // check if calibration is initiated. if not - initiate it
+    if (!ctx.getEntityById(imu.id).isCalibrated) {
+      sync({ request: HardwareEvent('calibrate imu', { no: imu.no }, true) })
+    }
+    // TO DANY: what happens if it afterwards becomes uncalibrated for some reason
   }
 })
 
@@ -102,10 +105,10 @@ ctx.bthread('doImuCalib', 'uncalibrated imu', function (entity) {
 
 ctx.bthread('str Turn On', 'str', function (strData) {
   while (true) {
-    sync({waitFor: hardwareEvent('strOn', {no: strData.id}, true)})
+    sync({ waitFor: HardwareEvent('strOn', { no: strData.id }, true) })
     bp.log.info('in imuOn ' + entity.data.no)
     // completed turn on str[x] (triggers a ctx effect)
-    sync({request: hardwareEvent('strOn', {no: strData.id}, false)})
+    sync({ request: HardwareEvent('strOn', { no: strData.id }, false) })
   }
 
 
