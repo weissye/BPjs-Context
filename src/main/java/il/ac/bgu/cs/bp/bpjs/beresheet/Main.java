@@ -16,7 +16,7 @@ import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 public class Main {
   public static void main(final String[] args) throws Exception {
 
-    System.out.println(" // start");
+    System.out.println("// start");
 
     runBPModel();
 
