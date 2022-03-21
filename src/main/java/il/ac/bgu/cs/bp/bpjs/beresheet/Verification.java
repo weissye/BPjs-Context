@@ -1,4 +1,4 @@
-package il.ac.bgu.cs.bp.bpjs.myContext;
+package il.ac.bgu.cs.bp.bpjs.beresheet;
 
 import il.ac.bgu.cs.bp.bpjs.analysis.DfsBProgramVerifier;
 import il.ac.bgu.cs.bp.bpjs.analysis.listeners.PrintDfsVerifierListener;
@@ -13,20 +13,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Verification {
-  /**
-   * Choose the desired COBP program...
-   */
-  private static final Example example =
-    Example.abpStudents;
-    // Example.abp;
-  // Main.Example.SampleProgram;
-  //      Main.Example.HotCold;
-//      Main.Example.TicTacToe;
 
   public static void main(final String[] args) throws URISyntaxException {
     List<String> files =
-        Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(example.name())).toURI()).toFile().listFiles()))
-            .map(f -> String.join("/", example.name(), f.getName()))
+        Arrays.stream(Objects.requireNonNull(Path.of(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("Beresheet")).toURI()).toFile().listFiles()))
+            .map(f -> String.join("/", "Beresheet", f.getName()))
             .collect(Collectors.toList());
     BProgram bprog = new ContextBProgram(files);
     DfsBProgramVerifier vfr = new DfsBProgramVerifier();

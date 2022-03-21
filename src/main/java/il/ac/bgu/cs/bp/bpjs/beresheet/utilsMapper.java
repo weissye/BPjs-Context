@@ -1,4 +1,4 @@
-//package il.ac.bgu.cs.bp.bpjs.myContext;
+//package il.ac.bgu.cs.bp.bpjs.bereshit;
 //
 //import static java.util.stream.Collectors.joining;
 //

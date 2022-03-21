@@ -1,4 +1,3 @@
-//----------------------------------------
 ctx.populateContext([
   ctx.Entity("abpData", "abp", {
     t_seq: 0,
@@ -7,10 +6,10 @@ ctx.populateContext([
     r2t: [],
     send_next: 0,
     received: [],
-    // TO_BE_SEND: [],
-    TO_BE_SEND: ['A', 'B', 'C', 'D', 'E', 'V'],
+    TO_BE_SEND: [],
+    // TO_BE_SEND: ['A', 'B', 'C'],
     SEQ_MAX: 2,
-    CHN_SIZE: 2,
+    CHN_SIZE: 3,
     CHN_LOSS: true,
     CHN_REORDERED: true
   })
@@ -33,30 +32,30 @@ ctx.registerQuery('r_recNak', function (entity) {
   return entity.t2r.length > 0 && entity.t2r[0][0] != entity.r_seq && entity.r2t.length < entity.CHN_SIZE
 })
 ctx.registerQuery('t2r_loss', function (entity) {
-  return entity.t2r.length > 1 && entity.CHN_LOSS
+  return entity.t2r.length > 0 && entity.CHN_LOSS
 })
 ctx.registerQuery('r2t_loss', function (entity) {
   return entity.r2t.length > 0 && entity.CHN_LOSS
 })
 ctx.registerQuery('t2r_reorder', function (entity) {
-  return entity.t2r.length > 1 && entity.CHN_REORDERED
+  return entity.t2r.length > 0 && entity.CHN_REORDERED
 })
 ctx.registerQuery('r2t_reorder', function (entity) {
-  return entity.r2t.length > 1 && entity.CHN_REORDERED
+  return entity.r2t.length > 0 && entity.CHN_REORDERED
 })
 
 ctx.registerQuery('T_SUCCESS', function (entity) {
-  return entity.send_next == entity.TO_BE_SEND.length && entity.TO_BE_SEND.toString() == entity.received.toString()
+  return entity.send_next==entity.TO_BE_SEND.length && entity.received.toString() == entity.TO_BE_SEND.toString()
 })
 ctx.registerQuery('T_FAIL', function (entity) {
   return entity.send_next==entity.TO_BE_SEND.length && entity.received.toString() != entity.TO_BE_SEND.toString()
 })
-ctx.registerQuery('T_DUP_ERROR', function (entity) {
-  return entity.received.filter(x => x == 'a').length > 1 || entity.received.filter(x => x == 'b').length > 1 || entity.received.filter(x => x == 'c').length > 1
-})
-ctx.registerQuery('T_LOST_ERROR', function (entity) {
-  return (entity.received.includes(String('b')) || entity.received.includes(String('c'))) && !entity.received.includes(String('a'))
-})
+// ctx.registerQuery('T_DUP_ERROR', function (entity) {
+//   return entity.received.filter(x => x == 'a').length > 1 || entity.received.filter(x => x == 'b').length > 1 || entity.received.filter(x => x == 'c').length > 1
+// })
+// ctx.registerQuery('T_LOST_ERROR', function (entity) {
+//   return (entity.received.includes(String('b')) || entity.received.includes(String('c'))) && !entity.received.includes(String('a'))
+// })
 
 
 ctx.registerEffect('send', function () {
@@ -127,10 +126,11 @@ ctx.registerEffect('r2tReorder', function (e) {
   // bp.log.info("Effect for r2tReorder, e={0}", e);
   ctx.updateEntity(e)
 })
+
 ctx.registerEffect('dataToBeSend', function (eventData) {
   e = ctx.getEntityById('abpData')
   e.TO_BE_SEND.push(eventData.info)
-  // bp.log.info("Effect for dataToBeSend, ee.data={0}", e);
+   // bp.log.info("Effect for dataToBeSend, ee.data={0}", e);
   ctx.updateEntity(e)
 })
 ctx.registerEffect('doT2rLost', function () {
@@ -153,3 +153,5 @@ ctx.registerEffect('doR2tReorder', function () {
   // bp.log.info("Effect for doR2tReorder, e.data={0}", e);
   ctx.updateEntity(e)
 })
+
+
